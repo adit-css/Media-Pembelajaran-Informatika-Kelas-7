@@ -17,13 +17,6 @@
 
 ---
 
-## 🆕 Pembaruan tampilan V22
-
-- Banner **Pertanyaan Pemantik** dipertahankan di seluruh bab pada menu Materi. Pertanyaan dan pengantarnya disesuaikan dengan topik tiap bab; urutannya cover RUANG PENJELAJAHAN → PERTANYAAN PEMANTIK → heading materi → kartu topik.
-- Label toolbar Misi diseragamkan menjadi **PROGRES PETUALANGAN · BAB XX**.
-- Progres dan tombol Reset tetap berada dalam satu toolbar; tidak menambah tombol Reset baru.
-- Konten, jumlah aktivitas, dan penyimpanan progres yang sudah ada tetap dipertahankan.
-
 ## 🚀 Tentang proyek
 
 **MISI ALGORITMA** adalah media pembelajaran interaktif Informatika kelas VII SMP. Siswa belajar lewat materi visual, cerita, misi, puzzle, mini-game, latihan logika, dan kuis. Setiap bab memiliki tema petualangan yang mengikuti materi bab tersebut.
