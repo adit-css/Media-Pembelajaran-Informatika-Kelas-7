@@ -16,13 +16,33 @@
     { q: 'Ketika membuat rancangan aplikasi, mengapa pengembang perlu menentukan informasi yang benar-benar dibutuhkan pengguna?', options: ['Agar tampilan dipenuhi semua detail', 'Agar masalah utama dan informasi penting menjadi lebih mudah dipahami', 'Agar aplikasi tidak memiliki tujuan', 'Agar semua data dihapus'], answer: 1, explain: 'Memusatkan perhatian pada informasi penting membantu menyederhanakan persoalan dan menghindari detail yang tidak relevan.' },
     { q: 'Dua cara berbeda dapat menyelesaikan persoalan yang sama. Apa yang perlu dipertimbangkan saat memilih salah satunya?', options: ['Hanya memilih cara dengan nama paling pendek', 'Memilih cara yang paling rumit', 'Mempertimbangkan keberhasilan dan penggunaan waktu atau sumber daya', 'Memilih secara acak'], answer: 2, explain: 'Solusi yang baik perlu efektif dalam mencapai tujuan dan efisien dalam penggunaan waktu, tenaga, atau biaya.' },
     { q: 'Apa manfaat menguji algoritma sebelum digunakan untuk pekerjaan sebenarnya?', options: ['Mengetahui apakah langkah-langkahnya menghasilkan keluaran yang diharapkan', 'Membuat jumlah instruksi selalu bertambah', 'Menghilangkan kebutuhan akan tujuan', 'Memastikan tidak ada perubahan yang boleh dilakukan'], answer: 0, explain: 'Pengujian membantu memeriksa apakah algoritma bekerja sesuai rancangan dan menemukan bagian yang perlu diperbaiki.' },
-    { q: 'Berpikir komputasional bermanfaat dalam kegiatan sehari-hari karena…', options: ['Hanya dapat dilakukan oleh programmer', 'Hanya berguna saat memakai laptop', 'Membantu menyusun langkah dan memilih solusi dalam berbagai persoalan', 'Menggantikan semua keputusan manusia'], answer: 2, explain: 'Berpikir komputasional tidak terbatas pada komputer. Cara berpikir ini juga membantu menyelesaikan persoalan di sekolah, rumah, dan bidang lain.' }
+    { q: 'Berpikir komputasional bermanfaat dalam kegiatan sehari-hari karena…', options: ['Hanya dapat dilakukan oleh programmer', 'Hanya berguna saat memakai laptop', 'Membantu menyusun langkah dan memilih solusi dalam berbagai persoalan', 'Menggantikan semua keputusan manusia'], answer: 2, explain: 'Berpikir komputasional tidak terbatas pada komputer. Cara berpikir ini juga membantu menyelesaikan persoalan di sekolah, rumah, dan bidang lain.' },
+    { q: 'Dalam persoalan membuat biskuit untuk keluarga kecil, cara penyelesaian dapat berbeda dari produksi massal karena ...', options: ['Semua persoalan harus memakai mesin yang sama', 'Skala masalah memengaruhi alat, sumber daya, dan pengaturan proses yang dibutuhkan', 'Produksi kecil tidak membutuhkan langkah', 'Jumlah bahan selalu sama untuk semua skala produksi'], answer: 1, explain: 'Buku menjelaskan bahwa cakupan masalah yang berbeda dapat membutuhkan cara dan peralatan yang berbeda pula.' },
+    { q: 'Sebuah pekerjaan memiliki tiga tahap: mengumpulkan bahan, menyusun bahan, lalu mengemas hasil. Jika tahap menyusun membutuhkan bahan yang telah dikumpulkan, urutan yang benar adalah ...', options: ['Mengemas, mengumpulkan, menyusun', 'Menyusun, mengemas, mengumpulkan', 'Mengumpulkan, menyusun, mengemas', 'Mengumpulkan, mengemas, lalu menyusun'], answer: 2, explain: 'Tahap yang menjadi prasyarat perlu dilakukan lebih dahulu agar tahap berikutnya dapat berjalan.' },
+    { q: 'Data daftar belanja ibu berisi tomat, wortel, dan beras. Jika tidak ada aturan urutan, daftar tersebut ...', options: ['Dapat dibeli dengan urutan berbeda tanpa mengubah isi daftar', 'Harus selalu dibeli menurut abjad', 'Tidak dapat disebut kumpulan data', 'Hanya boleh dibeli sesuai urutan saat ditulis'], answer: 0, explain: 'Daftar belanja dapat tidak memiliki keterurutan; posisi item tidak menentukan arti daftar.' },
+    { q: 'Manakah contoh pertanyaan yang dapat direpresentasikan dengan dua kemungkinan nilai?', options: ['Berapa usia kakak?', 'Apakah pintu kelas tertutup?', 'Apa nama ketua kelas?', 'Berapa jumlah buku di tas?'], answer: 1, explain: 'Pertanyaan tersebut dapat dijawab dengan ya atau tidak, sehingga sesuai untuk representasi dua nilai.' },
+    { q: 'Ketika dua kegiatan dapat dilakukan secara paralel, tujuan utama pengaturan tersebut adalah ...', options: ['Membuat seluruh pekerjaan saling menunggu', 'Menambah jumlah langkah tanpa alasan', 'Memanfaatkan waktu dengan mengerjakan kegiatan yang tidak saling bergantung secara bersamaan', 'Memaksa semua kegiatan memakai alat yang sama'], answer: 2, explain: 'Kegiatan yang tidak saling bergantung dapat berjalan bersamaan untuk menggunakan waktu lebih efisien.' }
   ];
   let current = 0;
   let answers = Array(questions.length).fill(null);
   const questionArea = document.getElementById('quizQuestionArea');
   const prev = document.getElementById('quizPrev');
   const next = document.getElementById('quizNext');
+
+  function updateBab2QuizProgress() {
+    const panel = document.getElementById('bab2QuizStatusPanel');
+    if (!panel) return;
+    const answered = answers.filter(value => value !== null).length;
+    const percent = Math.round((answered / questions.length) * 100);
+    const count = document.getElementById('bab2QuizAnsweredCount');
+    const label = document.getElementById('bab2QuizAnsweredPercent');
+    const bar = document.getElementById('bab2QuizAnsweredBar');
+    const stamp = document.getElementById('bab2QuizCurrent');
+    if (count) count.textContent = `${answered}/${questions.length} TERJAWAB`;
+    if (label) label.textContent = `${percent}%`;
+    if (bar) bar.style.width = `${percent}%`;
+    if (stamp) stamp.textContent = String(current + 1).padStart(2, '0');
+  }
 
   function renderQuestion() {
     const item = questions[current];
@@ -48,6 +68,7 @@
     questionArea.append(number, title, options, warning);
     prev.disabled = current === 0;
     next.textContent = current === questions.length - 1 ? 'Kumpulkan jawaban ✓' : 'Berikutnya →';
+    updateBab2QuizProgress();
   }
 
   prev.addEventListener('click', () => { if (current > 0) { current--; renderQuestion(); } });
@@ -68,6 +89,8 @@
     app.progress.quizScore = score;
     app.saveProgress();
     document.getElementById('quizShell').hidden = true;
+    const statusPanel = document.getElementById('bab2QuizStatusPanel');
+    if (statusPanel) statusPanel.hidden = true;
     const result = document.getElementById('quizResult');
     result.hidden = false;
     const heading = score >= 80 ? 'Hebat, misi pengetahuan berhasil!' : score >= 60 ? 'Bagus, terus tingkatkan!' : 'Ayo pelajari kembali materinya!';
@@ -82,7 +105,9 @@
       item.append(title, detail); review.appendChild(item);
     });
     document.getElementById('retryQuiz').addEventListener('click', () => {
-      current = 0; answers = Array(questions.length).fill(null); result.hidden = true; document.getElementById('quizShell').hidden = false; renderQuestion();
+      current = 0; answers = Array(questions.length).fill(null); result.hidden = true; document.getElementById('quizShell').hidden = false;
+      const statusPanel = document.getElementById('bab2QuizStatusPanel'); if (statusPanel) statusPanel.hidden = false;
+      renderQuestion();
     });
     document.getElementById('goStudy').addEventListener('click', () => app.showPage('materi'));
     result.scrollIntoView({ behavior: 'smooth', block: 'start' });

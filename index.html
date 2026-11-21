@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Media pembelajaran interaktif Informatika kelas VII tentang berpikir komputasional, algoritma, dan pola.">
+  <meta name="description" content="Media pembelajaran interaktif Informatika kelas VII dengan materi, misi, latihan, dan kuis berdasarkan sembilan bab.">
   <meta name="theme-color" content="#101a2d">
-  <title>Misi Algoritma — Petualangan Belajar Informatika</title>
-  <link rel="stylesheet" href="css/style.css?v=10">
+  <title>Misi Algoritma — Petualangan Informatika Kelas VII</title>
+  <link rel="stylesheet" href="css/style.css?v=22">
 </head>
 <body>
   <div class="site-shell">
     <header class="topbar">
       <a class="brand" href="#beranda" aria-label="Misi Algoritma, beranda">
         <span class="brand-mark">M<span>↗</span></span>
-        <span class="brand-copy"><strong>MISI ALGORITMA</strong><small>LABORATORIUM BERPIKIR</small></span>
+        <span class="brand-copy"><strong>MISI ALGORITMA</strong><small>LABORATORIUM INFORMATIKA</small></span>
       </a>
       <button class="menu-toggle" id="menuToggle" aria-label="Buka menu" aria-expanded="false">☰</button>
       <nav class="main-nav" id="mainNav" aria-label="Navigasi utama">
@@ -33,12 +33,12 @@
           <div class="hero-copy">
             <div class="eyebrow"><span class="eyebrow-line"></span> INFORMATIKA · KELAS VII</div>
             <h1 id="homeTitle">Pecahkan masalah.<br><em>Susun langkah.</em><br>Capai tujuan.</h1>
-            <p class="hero-lead">Selamat datang di laboratorium berpikir! Di sini kamu akan belajar menyusun algoritma, menemukan pola, dan memilih langkah yang tepat melalui tantangan interaktif.</p>
+            <p class="hero-lead">Selamat datang di laboratorium Informatika! Pelajari sembilan bab, mulai dari keterampilan generik, teknologi digital, sistem komputer, hingga pemrograman dan proyek komputasi melalui materi, misi, latihan, dan kuis interaktif.</p>
             <div class="hero-actions">
               <button class="btn btn-primary" data-go="materi">Mulai belajar <span>↗</span></button>
               <button class="btn btn-ghost" data-go="misi">Langsung ke misi <span>→</span></button>
             </div>
-            <div class="hero-note"><span class="note-icon">✦</span> Tidak perlu menghafal kode. Yang penting, pikirkan urutannya!</div>
+            <div class="hero-note"><span class="note-icon">✦</span> Pahami konsepnya, coba tantangannya, dan temukan cara kerja teknologi!</div>
           </div>
           <div class="hero-art" aria-label="Ilustrasi jalur algoritma berupa simpul dan garis">
             <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
@@ -56,15 +56,15 @@
           <p>Ikuti setiap tahap untuk membuka kemampuan baru.</p>
         </div>
         <div class="journey-grid">
-          <article class="journey-card"><div class="journey-number">01</div><div class="journey-icon icon-violet">▤</div><h3>Kenali konsep</h3><p>Pahami berpikir komputasional, algoritma, dan pola.</p><button class="text-link" data-go="materi">Buka materi <span>↗</span></button></article>
+          <article class="journey-card"><div class="journey-number">01</div><div class="journey-icon icon-violet">▤</div><h3>Kenali konsep</h3><p>Pahami sembilan bab Informatika kelas VII sesuai kebutuhan belajarmu.</p><button class="text-link" data-go="materi">Buka materi <span>↗</span></button></article>
           <article class="journey-card featured"><div class="journey-number">02</div><div class="journey-icon icon-lime">⌘</div><h3>Jalankan misi</h3><p>Susun instruksi, pecahkan pola, dan perbaiki kesalahan.</p><button class="text-link" data-go="misi">Mulai misi <span>↗</span></button></article>
           <article class="journey-card"><div class="journey-number">03</div><div class="journey-icon icon-orange">✎</div><h3>Uji pemahaman</h3><p>Latihan mandiri dan ukur pemahamanmu lewat kuis.</p><button class="text-link" data-go="kuis">Kerjakan kuis <span>↗</span></button></article>
         </div>
         <div class="progress-panel">
-          <div><div class="eyebrow">CATATAN PERJALANAN</div><h3>Progres belajarmu</h3><p>Progres tersimpan di browser yang sedang kamu gunakan.</p></div>
+          <div><div class="eyebrow">CATATAN PERJALANAN</div><h3>Progres Bab 2 — Berpikir Komputasional</h3><p>Ringkasan ini menampilkan progres Bab 2. Progres bab lain tersedia pada kartu pilihan bab di setiap menu.</p></div>
           <div class="progress-stats">
-            <div><strong id="progressMissions">0/6</strong><span>Misi selesai</span></div>
-            <div><strong id="progressQuiz">—</strong><span>Nilai kuis terakhir</span></div>
+            <div><strong id="progressMissions">0/10</strong><span>Misi Bab 2 selesai</span></div>
+            <div><strong id="progressQuiz">—</strong><span>Nilai kuis Bab 2</span></div>
             <div class="progress-track-wrap"><div class="progress-track"><span id="progressBar"></span></div><small id="progressText">Ayo mulai petualanganmu!</small></div>
           </div>
         </div>
@@ -76,11 +76,10 @@
           <div><div class="eyebrow">01 / BEKAL PETUALANGAN</div><h1 id="materiTitle">Kenali cara <em>berpikir.</em></h1><p>Berpikir komputasional membantu kita merumuskan masalah dan menyusun langkah penyelesaian yang dapat dijalankan.</p></div>
           <div class="heading-stamp">LEARN<br><b>01</b></div>
         </div>
-        <div class="concept-banner">
-          <div class="concept-mark">?</div>
-          <div><span class="mini-label">PERTANYAAN PEMANTIK</span><h2>Pernah mengikuti petunjuk untuk mencapai suatu tujuan?</h2><p>Contohnya mengikuti resep, petunjuk arah, atau aturan permainan. Semua itu membutuhkan langkah yang jelas dan berurutan.</p></div>
-        </div>
-        <div class="lesson-grid">
+        <div class="chapter-picker" data-chapter-picker="materi"></div>
+
+        <div class="bab2-content" id="legacy-bab2-materi">
+<div class="lesson-grid">
           <article class="lesson-card lesson-wide">
             <div class="lesson-top"><span class="lesson-index">A</span><span class="pill pill-violet">KONSEP UTAMA</span></div>
             <h2>Apa itu berpikir komputasional?</h2>
@@ -136,6 +135,8 @@
           <ol class="step-list"><li><span>01</span>Basahi tangan dengan air.</li><li><span>02</span>Gunakan sabun.</li><li><span>03</span>Gosok seluruh bagian tangan.</li><li><span>04</span>Bilas hingga bersih.</li><li><span>05</span>Keringkan tangan.</li></ol>
         </div>
         <div class="lesson-footer"><p>Sudah memahami bekalnya? Tekan tombol untuk membuka konfirmasi sebelum memulai Misi 1.</p><button class="btn btn-primary" id="completeLesson">Saya sudah memahami <span>✓</span></button></div>
+        </div>
+        <div class="chapter-dynamic-content" data-chapter-dynamic="materi" hidden></div>
       </section>
 
       <!-- MISI -->
@@ -144,7 +145,10 @@
           <div><div class="eyebrow">02 / ZONA TANTANGAN</div><h1 id="misiTitle">Saatnya <em>jalankan misi.</em></h1><p>Gunakan logika dan urutan langkah yang tepat. Setiap tantangan melatih cara berpikir yang berbeda.</p></div>
           <div class="heading-stamp">PLAY<br><b>02</b></div>
         </div>
-        <div class="mission-top-actions">
+        <div class="chapter-picker" data-chapter-picker="misi"></div>
+
+        <div class="bab2-content" id="legacy-bab2-misi">
+<div class="mission-top-actions">
           <span>Progres dan jawaban akan tersimpan otomatis. Gunakan reset untuk mengulang seluruh tantangan.</span>
           <button class="btn btn-small btn-reset" id="resetMissions" type="button">↻ Reset Misi</button>
         </div>
@@ -215,43 +219,57 @@
           </div>
         </article>
         <div class="mission-auto-next" id="missionAutoNext" hidden aria-live="polite"></div>
-        <div class="mission-completion"><span class="completion-icon">✦</span><div class="mission-completion-copy"><b>Delapan misi, delapan tantangan berpikir.</b><p>Selesaikan setiap tantangan untuk membuka misi berikutnya. Pop-up menuju Latihan muncul setelah seluruh misi berhasil diselesaikan.</p></div><strong id="missionDoneCount">0/8 SELESAI</strong></div>
+        <div id="bab2MissionExtras" class="bab2-extras"></div>
+        <div class="mission-completion"><span class="completion-icon">✦</span><div class="mission-completion-copy"><b>Sepuluh misi, sepuluh tantangan berpikir.</b><p>Selesaikan setiap tantangan untuk membuka misi berikutnya. Pop-up menuju Latihan muncul setelah seluruh misi berhasil diselesaikan.</p></div><strong id="missionDoneCount">0/10 SELESAI</strong></div>
+        </div>
+        <div class="chapter-dynamic-content" data-chapter-dynamic="misi" hidden></div>
       </section>
 
       <!-- LATIHAN -->
       <section class="page" id="page-latihan" aria-labelledby="latihanTitle">
         <div class="page-heading">
-          <div><div class="eyebrow">03 / RUANG LATIHAN</div><h1 id="latihanTitle">Asah logikamu <em>pelan-pelan.</em></h1><p>Selesaikan delapan latihan dengan situasi yang berbeda dari misi dan kuis. Baca persoalannya, pikirkan aturannya, lalu periksa jawabanmu.</p></div>
+          <div><div class="eyebrow">03 / RUANG LATIHAN</div><h1 id="latihanTitle">Asah logikamu <em>pelan-pelan.</em></h1><p>Selesaikan lima belas latihan dengan situasi yang berbeda dari misi dan kuis. Baca persoalannya, pikirkan aturannya, lalu periksa jawabanmu.</p></div>
           <div class="heading-stamp">PRACTICE<br><b>03</b></div>
         </div>
-        <div class="practice-progress-panel"><div><span class="mini-label">PROGRES LATIHAN</span><strong id="practiceDoneCount">0/8 LATIHAN SELESAI</strong></div><div class="progress-track"><span id="practiceDoneBar"></span></div><button class="btn btn-small btn-reset" id="resetPractice" type="button">↻ Reset Latihan</button></div>
+        <div class="chapter-picker" data-chapter-picker="latihan"></div>
+
+        <div class="bab2-content" id="legacy-bab2-latihan">
+<div class="practice-progress-panel"><div><span class="mini-label">PROGRES LATIHAN</span><strong id="practiceDoneCount">0/15 LATIHAN SELESAI</strong></div><div class="progress-track"><span id="practiceDoneBar"></span></div><button class="btn btn-small btn-reset" id="resetPractice" type="button">↻ Reset Latihan</button></div>
         <div class="practice-completion-notice" id="practiceCompletionNotice" hidden aria-live="polite"></div>
         <div class="practice-stack">
-          <article class="practice-card"><div class="practice-number">01</div><div class="practice-content"><span class="pill pill-violet">MENCARI POLA</span><h2>Prediksi jumlah stiker</h2><p>Raka menempelkan stiker dengan urutan jumlah berikut: <strong class="number-sequence">5 · 9 · 13 · 17 · ?</strong></p><div class="inline-answer"><input type="number" id="patternInput" placeholder="Jawabanmu" aria-label="Jawaban angka berikutnya"><button class="btn btn-small btn-primary" id="checkPattern">Periksa</button></div><div class="feedback" id="patternPracticeFeedback" aria-live="polite"></div></div></article>
-          <article class="practice-card"><div class="practice-number">02</div><div class="practice-content"><span class="pill pill-orange">URUTAN ALGORITMA</span><h2>Mengirim tugas digital</h2><p>Sebelum menekan tombol kirim, tindakan apa yang paling tepat dilakukan?</p><div class="choice-stack" id="bagChoices"><button data-choice="a">Memastikan berkas sudah terlampir dan dapat dibuka</button><button data-choice="b">Menutup halaman tugas</button><button data-choice="c">Mematikan perangkat</button></div><div class="feedback" id="bagFeedback" aria-live="polite"></div></div></article>
-          <article class="practice-card practice-card-visual"><div class="practice-number">03</div><div class="practice-content"><span class="pill pill-blue">EFEKTIF & EFISIEN</span><h2>Merapikan kartu anggota</h2><p>Petugas perpustakaan harus merapikan kartu anggota. Ada dua cara yang sama-sama menghasilkan kartu rapi. Amati perbandingan cara kerjanya, lalu pilih cara yang lebih efisien.</p><div class="sorting-visual" aria-label="Ilustrasi perbandingan dua cara merapikan kartu anggota"><div class="sorting-method sorting-method-a"><div class="sorting-method-head"><span class="sorting-tag">CARA A</span><strong>Periksa satu per satu</strong></div><div class="member-cards scattered-cards"><span>R</span><span>A</span><span>M</span><span>D</span><span>A</span><span>R</span><span>K</span><span>M</span><span>D</span></div><div class="sorting-time"><span>⏱</span><strong>18 menit</strong></div><small>Sering mengulang pemeriksaan kartu</small></div><div class="sorting-method sorting-method-b"><div class="sorting-method-head"><span class="sorting-tag">CARA B</span><strong>Kelompokkan huruf awal</strong></div><div class="member-groups"><div><b>A</b><span>A</span><span>A</span></div><div><b>D</b><span>D</span><span>D</span></div><div><b>M</b><span>M</span><span>M</span></div><div><b>R</b><span>R</span><span>R</span></div></div><div class="sorting-time"><span>⏱</span><strong>8 menit</strong></div><small>Kartu langsung dikelompokkan sesuai huruf</small></div></div><div class="question-prompt">Menurutmu, cara mana yang lebih efisien?</div><div class="choice-stack" id="routeChoices"><button data-choice="a">Cara A · 18 menit</button><button data-choice="b">Cara B · 8 menit</button></div><div class="feedback" id="routeFeedback" aria-live="polite"></div></div></article>
-          <article class="practice-card"><div class="practice-number">04</div><div class="practice-content"><span class="pill pill-violet">MENCARI POLA</span><h2>Lengkapi urutan angka</h2><p>Perhatikan pola berikut: <strong class="number-sequence">3 · 6 · 9 · 12 · ?</strong></p><div class="inline-answer"><input type="number" id="sequenceInput" placeholder="Jawabanmu" aria-label="Jawaban angka selanjutnya"><button class="btn btn-small btn-primary" id="checkSequence">Periksa</button></div><div class="feedback" id="sequenceFeedback" aria-live="polite"></div></div></article>
-          <article class="practice-card"><div class="practice-number">05</div><div class="practice-content"><span class="pill pill-orange">URUTAN ALGORITMA</span><h2>Membuat teh hangat</h2><p>Kamu ingin membuat teh hangat. Langkah mana yang paling tepat dilakukan terlebih dahulu?</p><div class="choice-stack" id="teaChoices"><button data-choice="a">Memanaskan air</button><button data-choice="b">Memasukkan es batu</button><button data-choice="c">Membuang kantong teh</button></div><div class="feedback" id="teaFeedback" aria-live="polite"></div></div></article>
+          <article class="practice-card mini-game-card mini-game-pattern"><div class="practice-number">01</div><div class="practice-content"><span class="pill pill-violet">🎮 MINI GAME 01 · PUZZLE POLA</span><h2>Prediksi jumlah stiker</h2><p>Raka menempelkan stiker dengan urutan jumlah berikut: <strong class="number-sequence">5 · 9 · 13 · 17 · ?</strong></p><div class="inline-answer"><input type="number" id="patternInput" placeholder="Jawabanmu" aria-label="Jawaban angka berikutnya"><button class="btn btn-small btn-primary" id="checkPattern">Periksa</button></div><div class="feedback" id="patternPracticeFeedback" aria-live="polite"></div></div></article>
+          <article class="practice-card mini-game-card mini-game-checkpoint"><div class="practice-number">02</div><div class="practice-content"><span class="pill pill-orange">🎮 MINI GAME 02 · CHECKPOINT</span><h2>Periksa paket tugas digital</h2><p>Sebelum menekan tombol kirim, tindakan apa yang paling tepat dilakukan?</p><div class="choice-stack" id="bagChoices"><button data-choice="a">Memastikan berkas sudah terlampir dan dapat dibuka</button><button data-choice="b">Menutup halaman tugas</button><button data-choice="c">Mematikan perangkat</button></div><div class="feedback" id="bagFeedback" aria-live="polite"></div></div></article>
+          <article class="practice-card practice-card-visual mini-game-card mini-game-sort"><div class="practice-number">03</div><div class="practice-content"><span class="pill pill-blue">🎮 MINI GAME 03 · SORTING CHALLENGE</span><h2>Merapikan kartu anggota</h2><p>Petugas perpustakaan harus merapikan kartu anggota. Ada dua cara yang sama-sama menghasilkan kartu rapi. Amati perbandingan cara kerjanya, lalu pilih cara yang lebih efisien.</p><div class="sorting-visual" aria-label="Ilustrasi perbandingan dua cara merapikan kartu anggota"><div class="sorting-method sorting-method-a"><div class="sorting-method-head"><span class="sorting-tag">CARA A</span><strong>Periksa satu per satu</strong></div><div class="member-cards scattered-cards"><span>R</span><span>A</span><span>M</span><span>D</span><span>A</span><span>R</span><span>K</span><span>M</span><span>D</span></div><div class="sorting-time"><span>⏱</span><strong>18 menit</strong></div><small>Sering mengulang pemeriksaan kartu</small></div><div class="sorting-method sorting-method-b"><div class="sorting-method-head"><span class="sorting-tag">CARA B</span><strong>Kelompokkan huruf awal</strong></div><div class="member-groups"><div><b>A</b><span>A</span><span>A</span></div><div><b>D</b><span>D</span><span>D</span></div><div><b>M</b><span>M</span><span>M</span></div><div><b>R</b><span>R</span><span>R</span></div></div><div class="sorting-time"><span>⏱</span><strong>8 menit</strong></div><small>Kartu langsung dikelompokkan sesuai huruf</small></div></div><div class="question-prompt">Menurutmu, cara mana yang lebih efisien?</div><div class="choice-stack" id="routeChoices"><button data-choice="a">Cara A · 18 menit</button><button data-choice="b">Cara B · 8 menit</button></div><div class="feedback" id="routeFeedback" aria-live="polite"></div></div></article>
+          <article class="practice-card mini-game-card mini-game-sequence"><div class="practice-number">04</div><div class="practice-content"><span class="pill pill-violet">🎮 MINI GAME 04 · PATTERN RUNNER</span><h2>Lengkapi urutan angka</h2><p>Perhatikan pola berikut: <strong class="number-sequence">3 · 6 · 9 · 12 · ?</strong></p><div class="inline-answer"><input type="number" id="sequenceInput" placeholder="Jawabanmu" aria-label="Jawaban angka selanjutnya"><button class="btn btn-small btn-primary" id="checkSequence">Periksa</button></div><div class="feedback" id="sequenceFeedback" aria-live="polite"></div></div></article>
+          <article class="practice-card mini-game-card mini-game-recipe"><div class="practice-number">05</div><div class="practice-content"><span class="pill pill-orange">🎮 MINI GAME 05 · RECIPE QUEST</span><h2>Membuat teh hangat</h2><p>Kamu ingin membuat teh hangat. Langkah mana yang paling tepat dilakukan terlebih dahulu?</p><div class="choice-stack" id="teaChoices"><button data-choice="a">Memanaskan air</button><button data-choice="b">Memasukkan es batu</button><button data-choice="c">Membuang kantong teh</button></div><div class="feedback" id="teaFeedback" aria-live="polite"></div></div></article>
           <article class="practice-card"><div class="practice-number">06</div><div class="practice-content"><span class="pill pill-violet">MEMBACA DATA</span><h2>Memilih penyajian informasi</h2><p>OSIS mencatat jumlah pengunjung perpustakaan selama lima hari. Bentuk penyajian apa yang paling mudah dipakai untuk membandingkan jumlah pengunjung tiap hari?</p><div class="choice-stack" id="binaryChoices"><button data-choice="a">Grafik batang</button><button data-choice="b">Satu paragraf cerita</button><button data-choice="c">Daftar nama pengunjung tanpa angka</button></div><div class="feedback" id="binaryFeedback" aria-live="polite"></div></div></article>
           <article class="practice-card"><div class="practice-number">07</div><div class="practice-content"><span class="pill pill-blue">STRUKTUR DATA</span><h2>Daftar yang terurut</h2><p>Contoh manakah yang menunjukkan daftar dengan aturan urutan yang jelas?</p><div class="choice-stack" id="listChoices"><button data-choice="a">Daftar nama siswa berdasarkan alfabet</button><button data-choice="b">Daftar belanja yang dibeli secara acak</button><button data-choice="c">Kumpulan benda di atas meja tanpa aturan</button></div><div class="feedback" id="listFeedback" aria-live="polite"></div></div></article>
           <article class="practice-card"><div class="practice-number">08</div><div class="practice-content"><span class="pill pill-orange">ABSTRAKSI</span><h2>Menyederhanakan denah</h2><p>Kamu membuat denah sederhana untuk menunjukkan jalan dari gerbang ke ruang kelas. Informasi mana yang paling penting dipertahankan?</p><div class="choice-stack" id="bucketPracticeChoices"><button data-choice="a">Warna cat setiap dinding</button><button data-choice="b">Letak gerbang, koridor, dan ruang kelas</button><button data-choice="c">Jenis hiasan di setiap pintu</button><button data-choice="d">Nama merek meja di kelas</button></div><div class="feedback" id="bucketPracticeFeedback" aria-live="polite"></div></div></article>
         </div>
+        <div id="bab2PracticeExtras" class="bab2-extras"></div>
+        </div>
+        <div class="chapter-dynamic-content" data-chapter-dynamic="latihan" hidden></div>
       </section>
 
       <!-- KUIS -->
       <section class="page" id="page-kuis" aria-labelledby="kuisTitle">
         <div class="page-heading">
-          <div><div class="eyebrow">04 / UJI PEMAHAMAN</div><h1 id="kuisTitle">Seberapa siap <em>kamu?</em></h1><p>Jawab 15 pertanyaan baru dengan situasi berbeda untuk menguji pemahamanmu tentang berpikir komputasional.</p></div>
+          <div><div class="eyebrow">04 / UJI PEMAHAMAN</div><h1 id="kuisTitle">Seberapa siap <em>kamu?</em></h1><p>Jawab 20 pertanyaan baru dengan situasi berbeda untuk menguji pemahamanmu tentang berpikir komputasional.</p></div>
           <div class="heading-stamp">QUIZ<br><b>04</b></div>
         </div>
-        <div class="quiz-shell" id="quizShell">
-          <div class="quiz-topline"><span class="pill pill-lime">KUIS AKHIR</span><span id="quizQuestionCount">PERTANYAAN 01 / 15</span></div>
+        <div class="chapter-picker" data-chapter-picker="kuis"></div>
+
+        <div class="bab2-content" id="legacy-bab2-kuis">
+<div class="quiz-shell" id="quizShell">
+          <div class="quiz-topline"><span class="pill pill-lime">KUIS AKHIR</span><span id="quizQuestionCount">PERTANYAAN 01 / 20</span></div>
           <div class="quiz-progress"><span id="quizProgressBar"></span></div>
           <div id="quizQuestionArea"></div>
           <div class="quiz-footer"><button class="btn btn-ghost" id="quizPrev" disabled>← Sebelumnya</button><button class="btn btn-primary" id="quizNext">Berikutnya →</button></div>
         </div>
         <div class="quiz-result" id="quizResult" hidden></div>
         <div class="quiz-reminder"><span>✦</span><p>Ingat: kesalahan adalah kesempatan untuk memperbaiki langkah. Baca pembahasan setiap jawaban agar semakin paham.</p></div>
+        </div>
+        <div class="chapter-dynamic-content" data-chapter-dynamic="kuis" hidden></div>
       </section>
     </main>
 
@@ -266,8 +284,14 @@
       <div class="transition-actions"><button class="btn btn-ghost" id="transitionLater">Nanti saja</button><button class="btn btn-primary" id="transitionContinue">Lanjutkan →</button></div>
     </section>
   </div>
-  <script src="js/main.js?v=10" defer></script>
-  <script src="js/game.js?v=10" defer></script>
-  <script src="js/kuis.js?v=10" defer></script>
+  <script src="js/main.js?v=22" defer></script>
+  <script src="js/game.js?v=22" defer></script>
+  <script src="js/kuis.js?v=22" defer></script>
+  <script src="js/chapters.js?v=22" defer></script>
+  <script src="js/chapter-expansion.js?v=22" defer></script>
+  <script src="js/quiz-fourth-options.js?v=22" defer></script>
+  <script src="js/practice-games.js?v=22" defer></script>
+  <script src="js/mission-games.js?v=22" defer></script>
+  <script src="js/bab2-extras.js?v=22" defer></script>
 </body>
 </html>

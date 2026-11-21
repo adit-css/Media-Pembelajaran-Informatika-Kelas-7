@@ -1,14 +1,15 @@
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'misiAlgoritmaProgressV3';
+  const STORAGE_KEY = 'misiAlgoritmaProgressV6';
   const defaultProgress = {
     lessonDone: false,
-    missions: { route: false, routeCampus: false, routeMusic: false, pattern: false, patternBonus: false, debug: false, schedule: false, representation: false },
-    practice: { pattern: false, bag: false, route: false, sequence: false, tea: false, binary: false, list: false, bucket: false },
+    missions: { route: false, routeCampus: false, routeMusic: false, pattern: false, patternBonus: false, debug: false, schedule: false, representation: false, bab2SecretWord: false, bab2ParallelPlan: false },
+    practice: { pattern: false, bag: false, route: false, sequence: false, tea: false, binary: false, list: false, bucket: false, bab2Effective: false, bab2Dependency: false, bab2OrderedList: false, bab2UnorderedList: false, bab2SecretChain: false, bab2ParallelWork: false, bab2YesNo: false },
     missionAnswers: {},
     practiceAnswers: {},
-    quizScore: null
+    quizScore: null,
+    quizQuestionCount: 20
   };
   let progress = loadProgress();
   let modalAction = null;
@@ -29,7 +30,10 @@
         practice: { ...defaultProgress.practice, ...(saved.practice || {}) },
         missionAnswers: saved.missionAnswers && typeof saved.missionAnswers === 'object' ? saved.missionAnswers : {},
         practiceAnswers: saved.practiceAnswers && typeof saved.practiceAnswers === 'object' ? saved.practiceAnswers : {},
-        quizScore: Number.isFinite(saved.quizScore) ? saved.quizScore : null
+        // Skor V11 berasal dari kuis 15 soal; V12 memakai 20 soal sehingga
+        // skor lama dikosongkan agar tidak ditampilkan sebagai hasil kuis baru.
+        quizScore: saved.quizQuestionCount === 20 && Number.isFinite(saved.quizScore) ? saved.quizScore : null,
+        quizQuestionCount: 20
       };
     } catch (error) {
       console.warn('Progres lokal tidak dapat dibaca:', error);
@@ -53,6 +57,10 @@
     document.getElementById('progressBar').style.width = `${percentage}%`;
     document.getElementById('progressText').textContent = done === total ? 'Semua misi telah diselesaikan!' : `${percentage}% misi selesai · terus lanjutkan!`;
     document.getElementById('missionDoneCount').textContent = `${done}/${total} SELESAI`;
+    const legacyCount = document.getElementById('bab2MissionToolbarCount');
+    const legacyBar = document.getElementById('bab2MissionToolbarBar');
+    if (legacyCount) legacyCount.textContent = `${done}/${total} misi ditaklukkan`;
+    if (legacyBar) legacyBar.style.width = `${percentage}%`;
     document.querySelectorAll('.mission-tab').forEach(tab => {
       tab.classList.toggle('is-complete', Boolean(progress.missions[tab.dataset.mission]));
     });
@@ -154,7 +162,7 @@
   }
 
   function markMissionDone(key, answer = null) {
-    const sequence = ['route', 'routeCampus', 'routeMusic', 'pattern', 'patternBonus', 'debug', 'schedule', 'representation'];
+    const sequence = ['route', 'routeCampus', 'routeMusic', 'pattern', 'patternBonus', 'debug', 'schedule', 'representation', 'bab2SecretWord', 'bab2ParallelPlan'];
     if (!sequence.includes(key)) return;
 
     const wasAlreadyDone = Boolean(progress.missions[key]);
@@ -179,7 +187,9 @@
       patternBonus: 'Gelang Lanjutan',
       debug: 'Detektif Bug',
       schedule: 'Optimasi Ember',
-      representation: 'Data Ya/Tidak'
+      representation: 'Data Ya/Tidak',
+      bab2SecretWord: 'Kata Rahasia',
+      bab2ParallelPlan: 'Jadwal Paralel'
     };
     const missionReasons = {
       route: 'Robot mencapai perpustakaan karena instruksi membawanya melewati petak yang aman. Urutan perintah menentukan apakah tujuan dapat dicapai tanpa menabrak rintangan.',
@@ -189,7 +199,9 @@
       patternBonus: 'Gelang kedua dapat menggunakan seluruh 83 manik-manik. Jumlah stoknya 20 + 23 + 18 + 22 = 83, dan urutan warna dapat dijalankan tanpa dua warna sama berdampingan.',
       debug: 'Urutan mencuci tangan sudah diperbaiki: basahi tangan, gunakan sabun, gosok seluruh bagian, bilas, lalu keringkan. Setiap langkah dilakukan setelah langkah sebelumnya agar proses berjalan benar.',
       schedule: 'Waktu tercepat adalah 90 menit. Setiap ember memerlukan 60 menit, sehingga total pekerjaan 180 menit-pancuran. Dua pancuran dapat bekerja bersamaan. Contohnya, isi A dan B selama 30 menit, A dan C selama 30 menit berikutnya, lalu B dan C selama 30 menit terakhir.',
-      representation: '“Apakah hari ini turun hujan?” hanya memiliki dua kemungkinan jawaban, yaitu ya atau tidak. Pertanyaan seperti warna kesukaan atau jumlah buku memiliki lebih dari dua kemungkinan jawaban.'
+      representation: '“Apakah hari ini turun hujan?” hanya memiliki dua kemungkinan jawaban, yaitu ya atau tidak. Pertanyaan seperti warna kesukaan atau jumlah buku memiliki lebih dari dua kemungkinan jawaban.',
+      bab2SecretWord: 'Hubungan huruf pada kartu harus diikuti dari huruf bawah ke huruf atas. Rangkaian yang terbentuk adalah K–O–M–P–U–T–A–S–I.',
+      bab2ParallelPlan: 'Unduhan dan membaca instruksi tidak saling bergantung, sehingga dapat berjalan bersamaan. Rangkuman dikerjakan setelah instruksi dibaca.'
     };
 
     const currentIndex = sequence.indexOf(key);
@@ -198,7 +210,7 @@
 
     if (allDone) {
       notice.hidden = false;
-      notice.innerHTML = `<span class="next-check">✓</span><div class="auto-next-copy"><strong>Semua misi berhasil diselesaikan!</strong><small>Hebat! Delapan tantangan sudah kamu tuntaskan. Bersiap menuju Latihan.</small><b>Pop-up menuju Latihan akan muncul dalam <span id="missionNextCountdown">3</span> detik. Setelah itu, tekan tombol lanjut untuk berpindah.</b><div class="auto-next-track"><i id="missionNextCountdownBar"></i></div></div>`;
+      notice.innerHTML = `<span class="next-check">✓</span><div class="auto-next-copy"><strong>Semua misi berhasil diselesaikan!</strong><small>Hebat! Sepuluh tantangan sudah kamu tuntaskan. Bersiap menuju Latihan.</small><b>Pop-up menuju Latihan akan muncul dalam <span id="missionNextCountdown">3</span> detik. Setelah itu, tekan tombol lanjut untuk berpindah.</b><div class="auto-next-track"><i id="missionNextCountdownBar"></i></div></div>`;
       notice.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       pendingMissionKey = key;
       let remaining = 3;
@@ -214,8 +226,8 @@
         notice.hidden = true;
         showTransferModal({
           eyebrow: 'SEMUA MISI SELESAI',
-          title: 'Delapan misi berhasil dituntaskan!',
-          message: 'Keren! Kamu sudah menyelesaikan seluruh tantangan petualangan algoritma. Siap menguji kemampuanmu melalui latihan berikutnya?',
+          title: 'Sepuluh misi berhasil dituntaskan!',
+          message: 'Keren! Kamu sudah menyelesaikan seluruh sepuluh tantangan petualangan algoritma. Siap menguji kemampuanmu melalui latihan berikutnya?',
           continueLabel: 'Lanjut ke Latihan →',
           onContinue: () => showPage('latihan')
         });
@@ -259,13 +271,13 @@
 
     const nowAllComplete = Object.keys(defaultProgress.practice).every(item => Boolean(progress.practice[item]));
     // Pop-up hanya dijadwalkan ketika jawaban terakhir baru saja diselesaikan,
-    // bukan setiap kali siswa menjawab ulang saat progres lama sudah 8/8.
+    // bukan setiap kali siswa menjawab ulang saat progres lama sudah 10/10.
     if (!wasAllComplete && nowAllComplete) {
       clearPracticeCompletionNotice();
       const notice = document.getElementById('practiceCompletionNotice');
       if (!notice) return;
       notice.hidden = false;
-      notice.innerHTML = `<span class="next-check">✓</span><div class="auto-next-copy"><strong>Semua latihan berhasil diselesaikan!</strong><small>Delapan latihan sudah tuntas. Keren! Kamu siap mencoba kuis akhir.</small><b>Pop-up menuju Kuis akan muncul dalam <span id="practiceNextCountdown">3</span> detik.</b><div class="auto-next-track"><i id="practiceNextCountdownBar"></i></div></div>`;
+      notice.innerHTML = `<span class="next-check">✓</span><div class="auto-next-copy"><strong>Semua latihan berhasil diselesaikan!</strong><small>Lima belas latihan sudah tuntas. Keren! Kamu siap mencoba kuis akhir.</small><b>Pop-up menuju Kuis akan muncul dalam <span id="practiceNextCountdown">3</span> detik.</b><div class="auto-next-track"><i id="practiceNextCountdownBar"></i></div></div>`;
       notice.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       let remaining = 3;
       practiceCompletionCountdown = window.setInterval(() => {
@@ -280,7 +292,7 @@
         showTransferModal({
           eyebrow: 'LATIHAN LENGKAP',
           title: 'Semua latihan berhasil!',
-          message: 'Hebat! Semua latihan sudah kamu tuntaskan. Sekarang saatnya menghadapi kuis akhir!',
+          message: 'Hebat! Semua lima belas latihan sudah kamu tuntaskan. Sekarang saatnya menghadapi kuis akhir!',
           continueLabel: 'Lanjut ke Kuis →',
           onContinue: () => showPage('kuis')
         });
@@ -527,8 +539,8 @@
       eyebrow: 'ATUR ULANG PROGRES',
       title: isMission ? 'Ulangi semua misi?' : 'Ulangi semua latihan?',
       message: isMission
-        ? 'Status hijau dan jawaban tersimpan untuk delapan misi akan dihapus. Setelah reset, kamu bisa mengerjakan semuanya dari awal. Progres Latihan dan nilai Kuis tidak berubah.'
-        : 'Status selesai dan jawaban tersimpan untuk delapan latihan akan dihapus. Setelah reset, kamu bisa mengerjakan semuanya dari awal. Progres Misi dan nilai Kuis tidak berubah.',
+        ? 'Status hijau dan jawaban tersimpan untuk sepuluh misi akan dihapus. Setelah reset, kamu bisa mengerjakan semuanya dari awal. Progres Latihan dan nilai Kuis tidak berubah.'
+        : 'Status selesai dan jawaban tersimpan untuk lima belas latihan akan dihapus. Setelah reset, kamu bisa mengerjakan semuanya dari awal. Progres Misi dan nilai Kuis tidak berubah.',
       continueLabel: isMission ? 'Reset Misi' : 'Reset Latihan',
       laterLabel: 'Batal',
       onContinue: () => {
@@ -550,11 +562,13 @@
           progress.missionAnswers = {};
           saveProgress();
           showMission('route');
+          window.MisiBab2ExtrasUI?.render?.();
         } else {
           progress.practice = { ...defaultProgress.practice };
           progress.practiceAnswers = {};
           clearPracticeUI();
           saveProgress();
+          window.MisiBab2ExtrasUI?.render?.();
         }
       }
     });
@@ -564,7 +578,7 @@
   document.getElementById('resetPractice')?.addEventListener('click', () => requestReset('practice'));
 
   restorePracticeUI();
-  window.MisiApp = { progress, saveProgress, markMissionDone, markPracticeDone, showPage, showMission };
+  window.MisiApp = { progress, saveProgress, markMissionDone, markPracticeDone, showPage, showMission, showTransferModal };
   updateProgressUI();
   updatePracticeProgressUI();
 })();
