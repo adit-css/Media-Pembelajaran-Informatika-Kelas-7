@@ -156,7 +156,7 @@
     document.querySelectorAll('.mission-panel').forEach(panel => panel.classList.toggle('active', panel.id === `mission-${key}`));
     if (shouldScroll) {
       window.setTimeout(() => {
-        document.getElementById(`mission-${key}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.getElementById(`mission-${key}`)?.scrollIntoView({ behavior: 'instant', block: 'nearest' });
       }, 80);
     }
   }
@@ -211,7 +211,6 @@
     if (allDone) {
       notice.hidden = false;
       notice.innerHTML = `<span class="next-check">✓</span><div class="auto-next-copy"><strong>Semua misi berhasil diselesaikan!</strong><small>Hebat! Sepuluh tantangan sudah kamu tuntaskan. Bersiap menuju Latihan.</small><b>Pop-up menuju Latihan akan muncul dalam <span id="missionNextCountdown">3</span> detik. Setelah itu, tekan tombol lanjut untuk berpindah.</b><div class="auto-next-track"><i id="missionNextCountdownBar"></i></div></div>`;
-      notice.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       pendingMissionKey = key;
       let remaining = 3;
       nextMissionCountdown = window.setInterval(() => {
@@ -240,7 +239,6 @@
 
     notice.hidden = false;
     notice.innerHTML = `<span class="next-check">✓</span><div class="auto-next-copy"><strong>${missionNames[key]} berhasil diselesaikan.</strong><small>${missionReasons[key]}</small><b>Misi berikutnya: ${missionNames[nextKey]}. Akan dibuka otomatis dalam <span id="missionNextCountdown">5</span> detik. Kamu tidak perlu menekan apa pun.</b><div class="auto-next-track"><i id="missionNextCountdownBar"></i></div></div>`;
-    notice.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
     pendingMissionKey = key;
     let remaining = 5;
@@ -278,7 +276,6 @@
       if (!notice) return;
       notice.hidden = false;
       notice.innerHTML = `<span class="next-check">✓</span><div class="auto-next-copy"><strong>Semua latihan berhasil diselesaikan!</strong><small>Lima belas latihan sudah tuntas. Keren! Kamu siap mencoba kuis akhir.</small><b>Pop-up menuju Kuis akan muncul dalam <span id="practiceNextCountdown">3</span> detik.</b><div class="auto-next-track"><i id="practiceNextCountdownBar"></i></div></div>`;
-      notice.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       let remaining = 3;
       practiceCompletionCountdown = window.setInterval(() => {
         remaining = Math.max(0, remaining - 1);

@@ -262,10 +262,11 @@
     if (!state[id]) state[id] = { materiDone:false, missions:{}, practices:{}, missionIndex:0, quiz:{ answers:{}, submitted:false, score:null, currentIndex:0 } };
     state[id].missions ||= {}; state[id].practices ||= {};
     if (!Number.isInteger(state[id].missionIndex)) {
-      const firstUnfinished = chapters[chapterId]?.missions.findIndex((_,i)=>!state[id].missions[i]) ?? -1;
+      const missionList = chapters[chapterId]?.missionGames?.length ? chapters[chapterId].missionGames : chapters[chapterId]?.missions;
+      const firstUnfinished = missionList?.findIndex((_,i)=>!state[id].missions[i]) ?? -1;
       state[id].missionIndex = firstUnfinished >= 0 ? firstUnfinished : 0;
     }
-    const expectedMissionCount = chapters[chapterId]?.missions.length || 0;
+    const expectedMissionCount = chapters[chapterId]?.missionGames?.length || chapters[chapterId]?.missions.length || 0;
     const expectedPracticeCount = chapters[chapterId]?.practice.length || 0;
     const expectedQuizCount = chapters[chapterId]?.quiz.length || 0;
     // V11 punya jumlah aktivitas lebih sedikit. Pertahankan jawaban Misi/Latihan
@@ -273,6 +274,8 @@
     if (state[id].missionCount !== expectedMissionCount) {
       state[id].missionPopupShown = false;
       state[id].missionCount = expectedMissionCount;
+      const firstUnfinished = Array.from({length:expectedMissionCount},(_,i)=>i).find(i=>!state[id].missions[i]);
+      if (firstUnfinished !== undefined) state[id].missionIndex = firstUnfinished;
     }
     if (state[id].practiceCount !== expectedPracticeCount) {
       state[id].practicePopupShown = false;
@@ -305,7 +308,7 @@
     }
     const p = getState(chapterId);
     if (menu === 'materi') return p.materiDone ? 'Selesai' : 'Belum';
-    if (menu === 'misi') return `${Object.values(p.missions).filter(Boolean).length}/${chapters[chapterId].missions.length}`;
+    if (menu === 'misi') { const total=chapters[chapterId].missionGames?.length || chapters[chapterId].missions.length; return `${Object.values(p.missions).filter(Boolean).length}/${total}`; }
     if (menu === 'latihan') return `${Object.values(p.practices).filter(Boolean).length}/${chapters[chapterId].practice.length}`;
     return p.quiz.submitted ? `${p.quiz.score}/100` : Object.keys(p.quiz.answers||{}).length ? `${Object.keys(p.quiz.answers).length}/${chapters[chapterId].quiz.length}` : 'Belum';
   }
@@ -319,7 +322,7 @@
     }
     const p=getState(chapterId);
     if(menu==='materi')return p.materiDone?100:0;
-    if(menu==='misi')return Math.round(Object.values(p.missions).filter(Boolean).length/chapters[chapterId].missions.length*100);
+    if(menu==='misi'){const total=chapters[chapterId].missionGames?.length || chapters[chapterId].missions.length;return Math.min(100,Math.round(Object.values(p.missions).filter(Boolean).length/total*100));}
     if(menu==='latihan')return Math.round(Object.values(p.practices).filter(Boolean).length/chapters[chapterId].practice.length*100);
     if(p.quiz.submitted)return 100;
     return Math.round(Object.keys(p.quiz.answers||{}).length/chapters[chapterId].quiz.length*100);
@@ -336,6 +339,15 @@
   function updatePicker(menu) {
     const el = document.querySelector(`[data-chapter-picker="${menu}"]`);
     if (el) el.innerHTML = pickerHtml(menu);
+  }
+  function updatePickerCard(menu, chapterId) {
+    const card = document.querySelector(`[data-chapter-picker="${menu}"] .chapter-pick[data-chapter="${chapterId}"]`);
+    if (!card) return;
+    const percent = progressFor(menu, chapterId);
+    const status = card.querySelector('.chapter-pick-progress small');
+    const bar = card.querySelector('.chapter-pick-progress i b');
+    if (status) status.textContent = statusFor(menu, chapterId);
+    if (bar) bar.style.width = `${percent}%`;
   }
   function updateHeading(menu, chapterId) {
     const page=document.getElementById(`page-${menu}`);
@@ -371,12 +383,12 @@
   function chapterCover(menu, chapterId, chapter) {
     const labels = {
       materi: { eyebrow:'RUANG PENJELAJAHAN', title:'Bangun bekal pengetahuanmu', detail:'Kenali ide utama, lihat contoh nyata, lalu hubungkan dengan kehidupan sehari-hari.', icon:'✦', tag:'BACA & TEMUKAN' },
-      misi: { eyebrow:'ARENA TANTANGAN', title:'Saatnya unjuk strategi', detail:'Selesaikan tantangan satu per satu. Setiap jawaban benar membuka langkah berikutnya.', icon:'⌘', tag:'COBA & PECAHKAN' },
+      misi: { eyebrow:'PROGRES PETUALANGAN', title:'Saatnya unjuk strategi', detail:'Selesaikan tantangan satu per satu. Setiap jawaban benar membuka langkah berikutnya.', icon:'⌘', tag:'COBA & PECAHKAN' },
       latihan: { eyebrow:'STUDIO LATIHAN', title:'Latih cara berpikirmu', detail:'Gunakan konsep yang sudah dipelajari untuk memecahkan situasi yang berbeda.', icon:'✎', tag:'ASAH KEMAMPUAN' },
       kuis: { eyebrow:'PANGGUNG KUIS', title:'Siap menguji kemampuan?', detail:'Jawab pertanyaan sampai tuntas dan lihat seberapa jauh pemahamanmu berkembang.', icon:'★', tag:'UJI PEMAHAMAN' }
     }[menu];
     const number = String(chapterId).padStart(2,'0');
-    const count = menu==='materi' ? `${chapter.topics.length} pokok bahasan` : menu==='misi' ? `${chapter.missions.length} misi` : menu==='latihan' ? `${chapter.practice.length} latihan` : `${chapter.quiz.length} pertanyaan`;
+    const count = menu==='materi' ? `${chapter.topics.length} pokok bahasan` : menu==='misi' ? `${chapter.missionGames?.length || chapter.missions.length} misi` : menu==='latihan' ? `${chapter.practice.length} latihan` : `${chapter.quiz.length} pertanyaan`;
     return `<section class="chapter-cover chapter-cover-${menu}">
       <div class="chapter-cover-copy">
         <span class="chapter-cover-eyebrow"><i>${labels.icon}</i>${labels.eyebrow} · BAB ${number}</span>
@@ -532,6 +544,7 @@
 
   function renderPathBoard(game, session, chapterId, taskIndex, mode, done) {
     const action=mode==='misi'?'data-mission-game-action':'data-practice-game-action';
+    if (done) { session.position = game.goal; session.path = [game.start, game.goal]; }
     const cells=Array.from({length:16},(_,i)=>{
       const classes=['mission-path-cell'];
       if(i===game.start)classes.push('is-start');
@@ -567,17 +580,17 @@
     let board='';
     if(game.type==='match'){
       const rightOrder=game.rightOrder||game.pairs.map((_,i)=>i).reverse();
-      board=`<div class="match-game-board"><div class="match-game-column"><span class="mini-label">KARTU KIRI</span>${game.pairs.map((pair,i)=>`<button type="button" class="match-game-tile" ${action}="match-left" data-chapter="${chapterId}" data-task="${taskIndex}" data-item="${i}" ${done?'disabled':''}>${escapeHtml(pair.left)}<small>Pasangkan ↗</small></button>`).join('')}</div><div class="match-game-connector" aria-hidden="true">⟷</div><div class="match-game-column"><span class="mini-label">KARTU KANAN</span>${rightOrder.map(i=>`<button type="button" class="match-game-tile" ${action}="match-right" data-chapter="${chapterId}" data-task="${taskIndex}" data-item="${i}" ${done?'disabled':''}>${escapeHtml(game.pairs[i].right)}<small>Hubungkan ↗</small></button>`).join('')}</div></div><div class="mini-game-progress" data-game-progress>${done?game.pairs.length:session.matched.length} / ${game.pairs.length} PASANGAN COCOK</div>`;
+      board=`<div class="match-game-board"><div class="match-game-column"><span class="mini-label">KARTU KIRI</span>${game.pairs.map((pair,i)=>`<button type="button" class="match-game-tile ${done?'is-matched':''}" ${action}="match-left" data-chapter="${chapterId}" data-task="${taskIndex}" data-item="${i}" ${done?'disabled':''}>${escapeHtml(pair.left)}<small>Pasangkan ↗</small></button>`).join('')}</div><div class="match-game-connector" aria-hidden="true">⟷</div><div class="match-game-column"><span class="mini-label">KARTU KANAN</span>${rightOrder.map(i=>`<button type="button" class="match-game-tile ${done?'is-matched':''}" ${action}="match-right" data-chapter="${chapterId}" data-task="${taskIndex}" data-item="${i}" ${done?'disabled':''}>${escapeHtml(game.pairs[i].right)}<small>Hubungkan ↗</small></button>`).join('')}</div></div><div class="mini-game-progress" data-game-progress>${done?game.pairs.length:session.matched.length} / ${game.pairs.length} PASANGAN COCOK</div>`;
     } else if(game.type==='sequence'){
       const order=game.tileOrder||game.steps.map((_,i)=>i).reverse();
       const picked=session.order.map((stepIndex,pos)=>`<span class="sequence-picked-chip"><b>${String(pos+1).padStart(2,'0')}</b>${escapeHtml(game.steps[stepIndex])}</span>`).join('');
-      board=`<div class="sequence-game-board"><div class="sequence-game-tray">${order.map(i=>`<button type="button" class="sequence-game-tile ${session.order.includes(i)?'is-selected':''}" ${action}="sequence" data-chapter="${chapterId}" data-task="${taskIndex}" data-item="${i}" ${done||session.order.includes(i)?'disabled':''}><span>${String(i+1).padStart(2,'0')}</span>${escapeHtml(game.steps[i])}<small>${session.order.includes(i)?'✓ DIPILIH':'KETUK KARTU'}</small></button>`).join('')}</div><div class="sequence-picked-wrap"><span class="mini-label">URUTAN YANG KAMU SUSUN</span><div class="sequence-picked-list" data-sequence-picked>${picked||'<span class="sequence-picked-empty">Belum ada langkah dipilih. Ketuk kartu untuk menyusun urutan.</span>'}</div></div><div class="sequence-game-controls"><button type="button" class="btn btn-small btn-ghost" ${action}="sequence-reset" data-chapter="${chapterId}" data-task="${taskIndex}" ${done||!session.order.length?'disabled':''}>↶ Atur ulang</button><button type="button" class="btn btn-small btn-primary" ${action}="sequence-check" data-chapter="${chapterId}" data-task="${taskIndex}" ${done||session.order.length!==game.steps.length?'disabled':''}>Periksa urutan →</button></div><div class="sequence-game-caption">Ketuk kartu dari langkah paling awal sampai selesai. Setelah semua kartu dipilih, periksa susunannya.</div></div><div class="mini-game-progress" data-game-progress>${done?game.steps.length:session.order.length} / ${game.steps.length} LANGKAH DIPILIH</div>`;
+      board=`<div class="sequence-game-board"><div class="sequence-game-tray">${order.map(i=>`<button type="button" class="sequence-game-tile ${done?'is-correct':session.order.includes(i)?'is-selected':''}" ${action}="sequence" data-chapter="${chapterId}" data-task="${taskIndex}" data-item="${i}" ${done||session.order.includes(i)?'disabled':''}><span class="sequence-tile-grip" aria-hidden="true">⠿</span><strong>${escapeHtml(game.steps[i])}</strong><small>${done?'✓ TEPAT':session.order.includes(i)?'✓ TERPILIH':'PILIH KARTU'}</small></button>`).join('')}</div><div class="sequence-picked-wrap"><span class="mini-label">URUTAN YANG KAMU SUSUN</span><div class="sequence-picked-list" data-sequence-picked>${picked||'<span class="sequence-picked-empty">Belum ada langkah dipilih. Ketuk kartu dari langkah paling awal.</span>'}</div></div><div class="sequence-game-controls"><button type="button" class="btn btn-small btn-ghost" ${action}="sequence-reset" data-chapter="${chapterId}" data-task="${taskIndex}" ${done||!session.order.length?'disabled':''}>↶ Atur ulang</button><button type="button" class="btn btn-small btn-primary" ${action}="sequence-check" data-chapter="${chapterId}" data-task="${taskIndex}" ${done||session.order.length!==game.steps.length?'disabled':''}>Periksa urutan →</button></div><div class="sequence-game-caption">Kartu di atas sengaja diacak dan tidak memiliki nomor urutan. Ketuk mulai dari langkah pertama, lalu susun sampai selesai.</div></div><div class="mini-game-progress" data-game-progress>${done?game.steps.length:session.order.length} / ${game.steps.length} LANGKAH DIPILIH</div>`;
     } else if(game.type==='classify'){
-      board=`<div class="classify-game-board"><div class="classify-game-items"><span class="mini-label">KARTU YANG HARUS DIPILAH</span>${game.items.map((item,i)=>`<button type="button" class="classify-game-tile" ${action}="classify-item" data-chapter="${chapterId}" data-task="${taskIndex}" data-item="${i}" ${done?'disabled':''}>${escapeHtml(item.text)}<small>${session.placed.includes(i)?'✓ Tersusun': 'Pilih kartu'}</small></button>`).join('')}</div><div class="classify-game-bins">${game.groups.map((group,i)=>`<button type="button" class="classify-game-bin" ${action}="classify-bin" data-chapter="${chapterId}" data-task="${taskIndex}" data-bin="${i}" ${done?'disabled':''}><span>${i===0?'📦':'🧺'}</span><b>${escapeHtml(group)}</b><small>Letakkan kartu di sini</small></button>`).join('')}</div></div><div class="mini-game-progress" data-game-progress>${done?game.items.length:session.placed.length} / ${game.items.length} KARTU TERSUSUN</div>`;
+      board=`<div class="classify-game-board"><div class="classify-game-items"><span class="mini-label">KARTU YANG HARUS DIPILAH</span>${game.items.map((item,i)=>`<button type="button" class="classify-game-tile ${done?'is-placed':''}" ${action}="classify-item" data-chapter="${chapterId}" data-task="${taskIndex}" data-item="${i}" ${done?'disabled':''}>${escapeHtml(item.text)}<small>${done||session.placed.includes(i)?'✓ Tersusun': 'Pilih kartu'}</small></button>`).join('')}</div><div class="classify-game-bins">${game.groups.map((group,i)=>`<button type="button" class="classify-game-bin ${done?'is-correct':''}" ${action}="classify-bin" data-chapter="${chapterId}" data-task="${taskIndex}" data-bin="${i}" ${done?'disabled':''}><span>${i===0?'📦':'🧺'}</span><b>${escapeHtml(group)}</b><small>Letakkan kartu di sini</small></button>`).join('')}</div></div><div class="mini-game-progress" data-game-progress>${done?game.items.length:session.placed.length} / ${game.items.length} KARTU TERSUSUN</div>`;
     } else if(game.type==='odd'){
-      board=`<div class="odd-game-board">${game.items.map((item,i)=>`<button type="button" class="odd-game-tile" ${action}="odd" data-chapter="${chapterId}" data-task="${taskIndex}" data-item="${i}" ${done?'disabled':''}><span>${['🧩','🔍','🗂️','✨'][i%4]}</span><b>${escapeHtml(item)}</b><small>Periksa item</small></button>`).join('')}</div>`;
+      board=`<div class="odd-game-board">${game.items.map((item,i)=>`<button type="button" class="odd-game-tile ${done&&i===game.oddIndex?'is-matched':''}" ${action}="odd" data-chapter="${chapterId}" data-task="${taskIndex}" data-item="${i}" ${done?'disabled':''}><span>${['🧩','🔍','🗂️','✨'][i%4]}</span><b>${escapeHtml(item)}</b><small>Periksa item</small></button>`).join('')}</div>`;
     } else {
-      board=`<div class="practice-game-decision-grid">${game.options.map((option,i)=>`<button type="button" class="practice-game-decision" ${action}="decision" data-chapter="${chapterId}" data-task="${taskIndex}" data-option="${i}" ${done?'disabled':''}><span>${['🧭','⚡','🧠','🛠️'][i%4]}</span><b>${escapeHtml(option)}</b><small>Jalankan strategi ↗</small></button>`).join('')}</div>`;
+      board=`<div class="practice-game-decision-grid">${game.options.map((option,i)=>`<button type="button" class="practice-game-decision ${done&&i===game.correct?'is-matched':''}" ${action}="decision" data-chapter="${chapterId}" data-task="${taskIndex}" data-option="${i}" ${done?'disabled':''}><span>${['🧭','⚡','🧠','🛠️'][i%4]}</span><b>${escapeHtml(option)}</b><small>Jalankan strategi ↗</small></button>`).join('')}</div>`;
     }
     return board;
   }
@@ -619,7 +632,7 @@
       <div class="practice-content"><span class="pill ${['pill-violet','pill-orange','pill-blue','pill-lime'][taskIndex%4]}">${label}</span><h2>${escapeHtml(task.title)}</h2>
         ${task.story?`<p class="chapter-practice-story">${escapeHtml(task.story)}</p>`:''}
         ${taskIndex%2===1?sceneMarkup(chapterId,taskIndex,'card'):''}
-        <p class="question-prompt">${escapeHtml(task.prompt)}</p>
+        <p class="question-prompt">${escapeHtml(task.prompt)}</p><p class="chapter-answer-instruction">Baca situasinya, lalu pilih satu jawaban yang paling sesuai.</p>
         <div class="choice-stack chapter-choice-list">${task.options.map((opt,j)=>`<button type="button" data-chapter-answer="latihan" data-chapter="${chapterId}" data-task="${taskIndex}" data-option="${j}" ${done?'disabled':''} class="practice-choice-tile ${done&&j===task.correct?'is-correct':''}"><span>${escapeHtml(opt)}</span><small>${done&&j===task.correct?'✓ BENAR':'PILIH INI ↗'}</small></button>`).join('')}</div>
         <div class="feedback chapter-feedback ${done?'success':''}" aria-live="polite">${done?`Benar! ${escapeHtml(task.explain)}`:''}</div>
       </div>
@@ -645,7 +658,7 @@
       const tabs=tasks.map((task,i)=>renderMissionTab(task,i,p,chapterId,firstUnfinished,allDone,current)).join('');
       const stage=missionGames.length?renderPracticeGame(tasks[current],current,chapterId,done,'misi'):renderMissionCard(tasks[current],current,chapterId,done);
       return `${chapterCover('misi',chapterId,c)}<div class="chapter-module chapter-module-mission chapter-bab2-style chapter-theme-${chapterId}">
-        <div class="chapter-menu-toolbar"><div><span class="mini-label">PROGRES PETUALANGAN · BAB ${String(chapterId).padStart(2,'0')}</span><strong>${count}/${tasks.length} misi ditaklukkan</strong><div class="progress-track"><span style="width:${percent}%"></span></div></div>${reset}</div>
+        <div class="chapter-menu-toolbar"><div><span class="mini-label">KEMAJUAN LEVEL · BAB ${String(chapterId).padStart(2,'0')}</span><strong>${count}/${tasks.length} misi ditaklukkan</strong><div class="progress-track"><span style="width:${percent}%"></span></div></div>${reset}</div>
         <div class="mission-tabs chapter-mission-tabs" role="tablist" aria-label="Pilih misi Bab ${chapterId}">${tabs}</div>
         <div class="chapter-mission-stage">${stage}</div>
         ${finish}
@@ -673,7 +686,8 @@
       const correct=questions.filter((item,i)=>q.answers[i]===item.correct).length;
       const reviews=questions.map((item,i)=>{
         const ok=q.answers[i]===item.correct;
-        return `<div class="review-item ${ok?'correct':'wrong'}"><strong>${ok?'✓':'×'} ${String(i+1).padStart(2,'0')} · ${escapeHtml(item.prompt)}</strong><small>Jawabanmu: ${escapeHtml(item.options[q.answers[i]]||'Belum dijawab')}<br>Jawaban tepat: ${escapeHtml(item.options[item.correct])}. ${escapeHtml(item.explain)}</small></div>`;
+        const options=item.options.map((option,j)=>`<div class="quiz-review-option ${j===item.correct?'is-correct':''} ${q.answers[i]===j&&!ok?'is-selected-wrong':''}"><span>${String.fromCharCode(65+j)}</span><b>${escapeHtml(option)}</b>${j===item.correct?'<em>✓ JAWABAN BENAR</em>':q.answers[i]===j?'<em>JAWABANMU</em>':''}</div>`).join('');
+        return `<div class="review-item ${ok?'correct':'wrong'}"><strong>${ok?'✓':'×'} ${String(i+1).padStart(2,'0')} · ${escapeHtml(item.prompt)}</strong><small>Jawabanmu: ${escapeHtml(item.options[q.answers[i]]||'Belum dijawab')}. ${escapeHtml(item.explain)}</small><div class="quiz-review-options">${options}</div></div>`;
       }).join('');
       const title=q.score>=85?'Luar biasa, kamu menguasainya!':q.score>=70?'Bagus, pemahamanmu berkembang!':q.score>=50?'Terus berlatih, kamu semakin dekat!':'Jangan menyerah, setiap percobaan membuatmu lebih paham!';
       return `${chapterCover('kuis',chapterId,c)}<div class="chapter-module chapter-module-quiz chapter-bab2-style chapter-theme-${chapterId}">
@@ -694,7 +708,7 @@
         <div class="quiz-question-area chapter-quiz-card-active">
           <div class="quiz-question-status-row"><div class="quiz-question-number">SOAL ${String(current+1).padStart(2,'0')} · ${chapterVisuals[chapterId]?.scenes[current%4]?.[1]?.toUpperCase()||'TANTANGAN'}</div><span class="chapter-task-status">${q.answers[current]!==undefined?'✓ SUDAH DIJAWAB':'PILIH SATU JAWABAN'}</span></div>
           ${scene}
-          <h2 class="quiz-question">${escapeHtml(item.prompt)}</h2>
+          <h2 class="quiz-question">${escapeHtml(item.prompt)}</h2><p class="quiz-instruction">Pilih satu jawaban yang paling tepat berdasarkan informasi pada soal.</p>
           <div class="quiz-options">${options}</div>${warning}
         </div>
         <div class="quiz-footer"><button type="button" class="btn btn-ghost" data-chapter-quiz-prev="${chapterId}" ${current===0?'disabled':''}>← Sebelumnya</button>${current===questions.length-1?`<button type="button" class="btn btn-primary" data-chapter-quiz-submit="${chapterId}">Kumpulkan jawaban ✓</button>`:`<button type="button" class="btn btn-primary" data-chapter-quiz-next="${chapterId}">Berikutnya →</button>`}</div>
@@ -716,7 +730,7 @@
   function setDynamicCompletion(menu, chapterId) {
     const p = getState(chapterId);
     const isMission = menu === 'misi'; const key = isMission?'missions':'practices';
-    const total = isMission?chapters[chapterId].missions.length:chapters[chapterId].practice.length;
+    const total = isMission?(chapters[chapterId].missionGames?.length || chapters[chapterId].missions.length):chapters[chapterId].practice.length;
     const allDone = Array.from({length:total},(_,i)=>Boolean(p[key][i])).every(Boolean);
     if (!allDone) return;
     const flag = isMission?'missionPopupShown':'practicePopupShown';
@@ -785,7 +799,7 @@
       if(!toolbar){
         toolbar=document.createElement('div');
         toolbar.className='chapter-menu-toolbar bab2-shared-toolbar';
-        toolbar.innerHTML='<div><span class="mini-label">PROGRES PETUALANGAN · BAB 02</span><strong id="bab2MissionToolbarCount">0/10 misi ditaklukkan</strong><div class="progress-track"><span id="bab2MissionToolbarBar"></span></div></div>';
+        toolbar.innerHTML='<div><span class="mini-label">KEMAJUAN LEVEL · BAB 02</span><strong id="bab2MissionToolbarCount">0/10 misi ditaklukkan</strong><div class="progress-track"><span id="bab2MissionToolbarBar"></span></div></div>';
         const reset=legacy.querySelector('#resetMissions');
         if(reset)toolbar.appendChild(reset);
         cover.insertAdjacentElement('afterend',toolbar);
@@ -858,74 +872,240 @@
     updatePicker(menu);
     if (!isBab2) {
       const count = menu==='misi'?Object.values(getState(chapterId).missions).filter(Boolean).length:menu==='latihan'?Object.values(getState(chapterId).practices).filter(Boolean).length:0;
-      if (menu==='misi'||menu==='latihan') setTimeout(()=>{const f=document.getElementById(`chapter-finish-${menu}-${chapterId}`);if(f&&count===(menu==='misi'?chapters[chapterId].missions.length:chapters[chapterId].practice.length))f.classList.add('visible');},0);
+      const total = menu==='misi'?(chapters[chapterId].missionGames?.length || chapters[chapterId].missions.length):chapters[chapterId].practice.length;
+      if (menu==='misi'||menu==='latihan') setTimeout(()=>{const f=document.getElementById(`chapter-finish-${menu}-${chapterId}`);if(f&&count===total)f.classList.add('visible');},0);
     }
   }
 
+  function updateDynamicProgress(menu, chapterId) {
+    const c = chapters[chapterId];
+    const p = getState(chapterId);
+    const dynamic = document.querySelector(`[data-chapter-dynamic="${menu}"]`);
+    if (!dynamic || !c) return;
+    const isMission = menu === 'misi';
+    const map = isMission ? p.missions : p.practices;
+    const total = isMission ? (c.missionGames?.length || c.missions.length) : c.practice.length;
+    const count = Array.from({ length: total }, (_, i) => Boolean(map[i])).filter(Boolean).length;
+    const percent = Math.round(count / total * 100);
+
+    const toolbar = dynamic.querySelector('.chapter-menu-toolbar');
+    if (toolbar) {
+      const strong = toolbar.querySelector('strong');
+      const bar = toolbar.querySelector('.progress-track span');
+      if (strong) strong.textContent = `${count}/${total} ${isMission ? 'misi ditaklukkan' : 'aktivitas selesai'}`;
+      if (bar) bar.style.width = `${percent}%`;
+    }
+    const practiceProgress = dynamic.querySelector('.chapter-unified-progress');
+    if (practiceProgress) {
+      const strong = practiceProgress.querySelector('strong');
+      const bar = practiceProgress.querySelector('.progress-track span');
+      if (strong) strong.textContent = `${count}/${total} AKTIVITAS SELESAI`;
+      if (bar) bar.style.width = `${percent}%`;
+    }
+
+    if (isMission) {
+      const firstUnfinished = Array.from({ length: total }, (_, i) => i).find(i => !p.missions[i]);
+      dynamic.querySelectorAll('.mission-tab[data-chapter-step]').forEach(tab => {
+        const index = Number(tab.dataset.chapterStep);
+        tab.classList.toggle('is-complete', Boolean(p.missions[index]));
+        tab.classList.toggle('active', index === p.missionIndex);
+        tab.setAttribute('aria-current', index === p.missionIndex ? 'step' : 'false');
+        tab.disabled = !p.missions[index] && firstUnfinished !== undefined && index > firstUnfinished;
+      });
+    }
+
+    const finish = dynamic.querySelector(`#chapter-finish-${menu}-${chapterId}`);
+    if (finish) {
+      const allDone = count === total;
+      finish.classList.toggle('is-ready', allDone);
+      const heading = finish.querySelector('b');
+      const message = finish.querySelector('p');
+      const status = finish.querySelector('strong');
+      if (heading) heading.textContent = allDone
+        ? (isMission ? 'Semua misi berhasil ditaklukkan!' : 'Semua latihan berhasil diselesaikan!')
+        : 'Perjalananmu terus berjalan!';
+      if (message) message.textContent = allDone
+        ? (isMission ? 'Kamu sudah menuntaskan seluruh tantangan. Berikutnya, uji kemampuanmu di ruang latihan.' : 'Hebat! Semua latihan sudah selesai. Sekarang saatnya mengukur pemahaman lewat kuis.')
+        : (isMission ? 'Selesaikan semua tantangan untuk membuka latihan.' : 'Teruskan sampai semua aktivitas selesai, lalu buka kuis.');
+      if (status) status.textContent = `${count}/${total} SELESAI`;
+      let next = finish.querySelector('[data-chapter-next]');
+      if (allDone && !next) {
+        next = document.createElement('button');
+        next.type = 'button';
+        next.className = 'btn btn-primary';
+        next.dataset.chapterNext = isMission ? 'latihan' : 'kuis';
+        next.dataset.chapter = String(chapterId);
+        next.textContent = `Lanjut ke ${isMission ? 'Latihan' : 'Kuis'} →`;
+        finish.appendChild(next);
+      }
+      if (!allDone && next) next.remove();
+    }
+    updatePickerCard(menu, chapterId);
+  }
+
+  function renderMissionStageOnly(chapterId) {
+    const p = getState(chapterId);
+    const c = chapters[chapterId];
+    const dynamic = document.querySelector('[data-chapter-dynamic="misi"]');
+    if (!dynamic || !c) return;
+    const tasks = c.missionGames?.length ? c.missionGames : c.missions;
+    const firstUnfinished = tasks.findIndex((_, i) => !p.missions[i]);
+    const allDone = firstUnfinished < 0;
+    let current = allDone ? Math.min(Number(p.missionIndex) || 0, tasks.length - 1) : Math.max(0, firstUnfinished);
+    p.missionIndex = current;
+    save();
+    dynamic.querySelectorAll('.mission-tab[data-chapter-step]').forEach(tab => {
+      const index = Number(tab.dataset.chapterStep);
+      const locked = !p.missions[index] && !allDone && firstUnfinished >= 0 && index > firstUnfinished;
+      tab.disabled = locked;
+      tab.classList.toggle('active', index === current);
+      tab.classList.toggle('is-complete', Boolean(p.missions[index]));
+      tab.setAttribute('aria-current', index === current ? 'step' : 'false');
+    });
+    const stage = dynamic.querySelector('.chapter-mission-stage');
+    if (stage) {
+      const done = Boolean(p.missions[current]);
+      const nextMarkup = c.missionGames?.length
+        ? renderPracticeGame(tasks[current], current, chapterId, done, 'misi')
+        : renderMissionCard(tasks[current], current, chapterId, done);
+      stage.classList.add('is-changing');
+      window.requestAnimationFrame(() => {
+        stage.innerHTML = nextMarkup;
+        stage.classList.remove('is-changing');
+      });
+    }
+    updateDynamicProgress('misi', chapterId);
+  }
+
   function chooseAnswer(menu, chapterId, taskIndex, optionIndex, button) {
-    const c=chapters[chapterId], isMission=menu==='misi';
-    const task=isMission?c.missions[taskIndex]:c.practice[taskIndex];
-    if(!task)return;
-    const p=getState(chapterId), key=isMission?'missions':'practices';
-    if(p[key][taskIndex])return;
-    const card=button.closest('.chapter-task-card'), feedback=card?.querySelector('.chapter-feedback');
-    card?.querySelectorAll('.chapter-choice-list button,.mission-action-card').forEach(b=>b.classList.remove('is-wrong','is-correct','selected'));
-    if(optionIndex===task.correct){
-      card?.querySelectorAll('.chapter-choice-list button,.mission-action-card').forEach(b=>{b.disabled=true;if(Number(b.dataset.option)===task.correct)b.classList.add('is-correct');});
-      if(feedback){feedback.className='chapter-feedback success';feedback.textContent=`Benar! ${task.explain}`;}
-      p[key][taskIndex]=true;
-      if(isMission)p.missionIndex=taskIndex;
+    const c = chapters[chapterId], isMission = menu === 'misi';
+    const task = isMission ? c.missions[taskIndex] : c.practice[taskIndex];
+    if (!task) return;
+    const p = getState(chapterId), key = isMission ? 'missions' : 'practices';
+    if (p[key][taskIndex]) return;
+    const card = button.closest('.chapter-task-card'), feedback = card?.querySelector('.chapter-feedback');
+    const choices = card?.querySelectorAll('.chapter-choice-list button,.mission-action-card') || [];
+    if (optionIndex === task.correct) {
+      choices.forEach(b => {
+        const correct = Number(b.dataset.option) === task.correct;
+        b.disabled = true;
+        b.classList.remove('is-wrong', 'selected', 'is-correct');
+        if (correct) { b.classList.add('is-correct', 'selected'); b.setAttribute('data-answer-state', 'correct'); }
+        else b.removeAttribute('data-answer-state');
+        b.setAttribute('aria-pressed', String(correct));
+        const label = b.querySelector('small');
+        if (label && correct) label.textContent = '✓ BENAR';
+      });
+      card?.classList.add('is-complete', 'answer-locked-correct');
+      if (feedback) { feedback.className = 'chapter-feedback success'; feedback.textContent = `Benar! ${task.explain}`; }
+      p[key][taskIndex] = true;
+      if (isMission) p.missionIndex = taskIndex;
       save();
-      const remaining=(isMission?c.missions:c.practice).filter((_,i)=>!p[key][i]).length;
-      if(isMission && remaining>0){
-        const stage=card?.querySelector('.chapter-task-foot');
-        if(stage)stage.innerHTML='<span class="chapter-advance-message">Level berhasil! Portal menuju tantangan berikutnya sedang dibuka…</span><span class="chapter-foot-spark">✦</span>';
+      updateDynamicProgress(menu, chapterId);
+      const remaining = (isMission ? c.missions : c.practice).filter((_, i) => !p[key][i]).length;
+      if (isMission && remaining > 0) {
+        const foot = card?.querySelector('.chapter-task-foot');
+        if (foot) foot.innerHTML = '<span class="chapter-advance-message">Level berhasil! Portal menuju tantangan berikutnya sedang dibuka…</span><span class="chapter-foot-spark">✦</span>';
       }
-      renderMenu(menu);
-      setDynamicCompletion(menu,chapterId);
-      if(isMission && remaining>0){
-        const advanceNote=document.querySelector(`[data-chapter-dynamic="misi"] .chapter-task-foot`);
-        if(advanceNote)advanceNote.innerHTML='<span class="chapter-advance-message">Level berhasil! Portal menuju tantangan berikutnya sedang dibuka…</span><span class="chapter-foot-spark">✦</span>';
-        const old=missionAdvanceTimers.get(String(chapterId));
-        if(old)window.clearTimeout(old);
-        const timer=window.setTimeout(()=>{
-          const fresh=getState(chapterId);
-          const nextIndex=c.missions.findIndex((_,i)=>!fresh.missions[i]);
-          if(nextIndex>=0){fresh.missionIndex=nextIndex;save();if(Number(selection.misi)===Number(chapterId))renderMenu('misi');}
-          missionAdvanceTimers.delete(String(chapterId));
-        },1150);
-        missionAdvanceTimers.set(String(chapterId),timer);
-      }
-    }else{
-      button.classList.add('is-wrong');
-      if(feedback){feedback.className='chapter-feedback error';feedback.textContent=isMission?'Belum berhasil. Coba strategi lain untuk menuntaskan level ini.':'Belum tepat. Coba periksa kembali informasi dan pilih jawaban lain.';}
+      setDynamicCompletion(menu, chapterId);
+      if (isMission && remaining > 0) scheduleMissionAdvance(chapterId);
+    } else {
+      choices.forEach(choice => {
+        choice.classList.remove('is-wrong', 'selected');
+        choice.removeAttribute('data-answer-state');
+        choice.setAttribute('aria-pressed', 'false');
+      });
+      button.classList.remove('is-correct');
+      button.classList.add('is-wrong', 'selected');
+      button.setAttribute('data-answer-state', 'incorrect');
+      button.setAttribute('aria-pressed', 'true');
+      if (feedback) { feedback.className = 'chapter-feedback error'; feedback.textContent = isMission ? 'Belum berhasil. Coba strategi lain untuk menuntaskan level ini.' : 'Belum tepat. Coba periksa kembali informasi dan pilih jawaban lain.'; }
     }
   }
 
   function scheduleMissionAdvance(chapterId) {
-    const old=missionAdvanceTimers.get(String(chapterId));
-    if(old)window.clearTimeout(old);
-    const timer=window.setTimeout(()=>{
-      const p=getState(chapterId);
-      const nextIndex=chapters[chapterId].missionGames.findIndex((_,i)=>!p.missions[i]);
-      if(nextIndex>=0){p.missionIndex=nextIndex;save();if(Number(selection.misi)===Number(chapterId))renderMenu('misi');}
+    const old = missionAdvanceTimers.get(String(chapterId));
+    if (old) window.clearTimeout(old);
+    const timer = window.setTimeout(() => {
+      const p = getState(chapterId);
+      const c = chapters[chapterId];
+      const tasks = c.missionGames?.length ? c.missionGames : c.missions;
+      const nextIndex = tasks.findIndex((_, i) => !p.missions[i]);
+      if (nextIndex >= 0) {
+        p.missionIndex = nextIndex;
+        save();
+        if (Number(selection.misi) === Number(chapterId)) renderMissionStageOnly(chapterId);
+      }
       missionAdvanceTimers.delete(String(chapterId));
-    },1400);
-    missionAdvanceTimers.set(String(chapterId),timer);
+    }, 1350);
+    missionAdvanceTimers.set(String(chapterId), timer);
   }
 
-  function completeInteractiveGame(chapterId, taskIndex, mode) {
-    const p=getState(chapterId),isMission=mode==='misi', map=isMission?'missions':'practices';
-    if(p[map][taskIndex])return;
-    p[map][taskIndex]=true;
-    if(isMission)p.missionIndex=taskIndex;
-    practiceGameSessions.delete(practiceGameKey(chapterId,taskIndex,mode));
+  function completeInteractiveGame(chapterId, taskIndex, mode, card, selectedButton, game, session) {
+    const p = getState(chapterId), isMission = mode === 'misi', map = isMission ? 'missions' : 'practices';
+    if (p[map][taskIndex]) return;
+    p[map][taskIndex] = true;
+    if (isMission) p.missionIndex = taskIndex;
     save();
-    renderMenu(mode);
-    setDynamicCompletion(mode,chapterId);
-    if(isMission){
-      const remaining=chapters[chapterId].missionGames.filter((_,i)=>!p.missions[i]).length;
-      if(remaining>0)scheduleMissionAdvance(chapterId);
+
+    if (card) {
+      card.classList.add('is-complete');
+      card.querySelectorAll('button').forEach(button => { button.disabled = true; });
+      if (game.type === 'match') {
+        card.querySelectorAll('.match-game-tile').forEach(button => {
+          button.classList.add('is-matched');
+          const label = button.querySelector('small');
+          if (label) label.textContent = '✓ PASANGAN BENAR';
+          button.setAttribute('aria-pressed', 'true');
+          button.dataset.answerState = 'correct';
+        });
+      } else if (game.type === 'sequence') {
+        card.querySelectorAll('.sequence-game-tile').forEach(button => { button.classList.remove('is-selected'); button.classList.add('is-correct'); });
+        const picked = card.querySelector('[data-sequence-picked]');
+        if (picked) picked.innerHTML = game.steps.map((step, i) => `<span class="sequence-picked-chip"><b>${String(i + 1).padStart(2, '0')}</b>${escapeHtml(step)}</span>`).join('');
+      } else if (game.type === 'classify') {
+        card.querySelectorAll('.classify-game-tile').forEach(button => { button.classList.add('is-placed'); const small = button.querySelector('small'); if (small) small.textContent = '✓ Tersusun'; });
+        card.querySelectorAll('.classify-game-bin').forEach(button => button.classList.add('is-correct'));
+      } else if (game.type === 'odd') {
+        const oddTile = card.querySelector(`.odd-game-tile[data-item="${game.oddIndex}"]`);
+        oddTile?.classList.add('is-matched');
+        const label = oddTile?.querySelector('small');
+        if (label) label.textContent = '✓ TEPAT';
+        if (oddTile) { oddTile.setAttribute('aria-pressed', 'true'); oddTile.dataset.answerState = 'correct'; }
+      } else if (game.type === 'decision') {
+        const decision = card.querySelector(`.practice-game-decision[data-option="${game.correct}"]`);
+        decision?.classList.add('is-matched');
+        const label = decision?.querySelector('small');
+        if (label) label.textContent = '✓ STRATEGI TEPAT';
+        if (decision) { decision.setAttribute('aria-pressed', 'true'); decision.dataset.answerState = 'correct'; }
+      } else if (game.type === 'path') {
+        card.querySelectorAll('.mission-path-cell').forEach(cell => cell.classList.remove('is-player'));
+        const goalCell = card.querySelector(`.mission-path-cell[data-path-cell="${game.goal}"]`);
+        if (goalCell) { goalCell.classList.add('is-player', 'is-complete'); goalCell.textContent = '🏁'; }
+        card.querySelectorAll('.mission-path-controls button').forEach(control => { control.disabled = true; });
+      }
+      const progress = card.querySelector('[data-game-progress]');
+      if (progress) {
+        if (game.type === 'match') progress.textContent = `${game.pairs.length} / ${game.pairs.length} PASANGAN COCOK`;
+        else if (game.type === 'sequence') progress.textContent = `${game.steps.length} / ${game.steps.length} LANGKAH TEPAT`;
+        else if (game.type === 'classify') progress.textContent = `${game.items.length} / ${game.items.length} KARTU TERSUSUN`;
+        else if (game.type === 'path') progress.textContent = 'TUJUAN TERCAPAI';
+      }
+      const feedback = card.querySelector('.chapter-feedback');
+      if (feedback) { feedback.className = 'feedback chapter-feedback success'; feedback.textContent = `Berhasil! ${game.explain}`; }
+      const foot = card.querySelector('.chapter-task-foot');
+      if (foot) foot.innerHTML = `<span>${isMission ? 'Hebat! Tantangan ini sudah kamu taklukkan.' : 'Aktivitas selesai! Poin latihan berhasil kamu dapatkan.'}</span><span class="chapter-foot-spark">✦</span>`;
+    }
+    practiceGameSessions.delete(practiceGameKey(chapterId, taskIndex, mode));
+    updateDynamicProgress(mode, chapterId);
+    setDynamicCompletion(mode, chapterId);
+    if (isMission) {
+      const remaining = (chapters[chapterId].missionGames || chapters[chapterId].missions).filter((_, i) => !p.missions[i]).length;
+      if (remaining > 0) {
+        const foot = card?.querySelector('.chapter-task-foot');
+        if (foot) foot.innerHTML = '<span class="chapter-advance-message">Tantangan berhasil! Level berikutnya sedang disiapkan…</span><span class="chapter-foot-spark">✦</span>';
+        scheduleMissionAdvance(chapterId);
+      }
     }
   }
 
@@ -953,7 +1133,7 @@
     const attr=isMission?'data-mission-game-action':'data-practice-game-action';
     const ok=(message)=>{if(feedback){feedback.className='feedback chapter-feedback success';feedback.textContent=message;}};
     const fail=(message)=>{if(feedback){feedback.className='feedback chapter-feedback error';feedback.textContent=message;}};
-    const finish=()=>completeInteractiveGame(chapterId,taskIndex,mode);
+    const finish=()=>completeInteractiveGame(chapterId,taskIndex,mode,card,button,game,session);
 
     if(game.type==='path'){
       const action=button.getAttribute(attr);
@@ -981,7 +1161,17 @@
       if(button.getAttribute(attr)==='match-right'){
         const index=Number(button.dataset.item);if(session.matched.includes(index))return;
         if(session.selectedLeft===null){fail('Pilih satu kartu di sisi kiri terlebih dahulu.');return;}
-        if(session.selectedLeft!==index){session.selectedLeft=null;card.querySelectorAll('.match-game-tile').forEach(el=>el.classList.remove('is-selected'));fail('Belum cocok. Coba pasangkan dengan kartu lain.');return;}
+        if(session.selectedLeft!==index){
+          const wrongLeft=session.selectedLeft;
+          session.selectedLeft=null;
+          card.querySelectorAll('.match-game-tile').forEach(el=>el.classList.remove('is-selected'));
+          const leftTile=card.querySelector(`[${attr}="match-left"][data-item="${wrongLeft}"]`);
+          const rightTile=card.querySelector(`[${attr}="match-right"][data-item="${index}"]`);
+          [leftTile,rightTile].forEach(el=>el?.classList.add('is-wrong'));
+          fail('Kedua kartu belum cocok. Coba pasangan lain.');
+          window.setTimeout(()=>[leftTile,rightTile].forEach(el=>el?.classList.remove('is-wrong')),600);
+          return;
+        }
         session.matched.push(index);session.selectedLeft=null;
         card.querySelectorAll(`[${attr}="match-left"][data-item="${index}"],[${attr}="match-right"][data-item="${index}"]`).forEach(el=>{el.classList.remove('is-selected');el.classList.add('is-matched');el.disabled=true;});
         if(progress)progress.textContent=`${session.matched.length} / ${game.pairs.length} PASANGAN COCOK`;
@@ -1001,7 +1191,7 @@
       }
       if(action==='sequence-reset'){
         session.order=[];
-        card.querySelectorAll('.sequence-game-tile').forEach(el=>{el.classList.remove('is-selected','is-matched');el.disabled=false;el.querySelector('small').textContent='KETUK KARTU';});
+        card.querySelectorAll('.sequence-game-tile').forEach(el=>{el.classList.remove('is-selected','is-matched','is-wrong');el.disabled=false;el.querySelector('small').textContent='PILIH KARTU';});
         const picked=card.querySelector('[data-sequence-picked]');if(picked)picked.innerHTML='<span class="sequence-picked-empty">Belum ada langkah dipilih. Ketuk kartu untuk mulai.</span>';
         if(progress)progress.textContent=`0 / ${game.steps.length} LANGKAH DIPILIH`;
         const check=card.querySelector(`[${attr}="sequence-check"]`);if(check)check.disabled=true;
@@ -1009,8 +1199,11 @@
       }
       if(action==='sequence-check'){
         const correct=session.order.length===game.steps.length&&session.order.every((stepIndex,pos)=>stepIndex===pos);
-        if(correct){card.querySelectorAll('.sequence-game-tile').forEach(el=>el.classList.remove('is-selected'));finish();}
-        else fail('Urutannya belum tepat. Tekan Atur Ulang untuk mencoba lagi.');
+        if(correct){card.querySelectorAll('.sequence-game-tile').forEach(el=>el.classList.remove('is-selected','is-wrong'));finish();}
+        else {
+          card.querySelectorAll('.sequence-game-tile').forEach(el=>el.classList.add('is-wrong'));
+          fail('Urutannya belum tepat. Tekan Atur Ulang untuk mengosongkan susunan, lalu coba lagi.');
+        }
         return;
       }
     }
@@ -1044,7 +1237,7 @@
     const isMission=menu==='misi';
     window.MisiApp?.showTransferModal?.({
       eyebrow:'ATUR ULANG BAB', title:`Reset ${isMission?'Misi':'Latihan'} Bab ${chapterId}?`,
-      message:`Status selesai dan jawaban benar pada ${isMission?chapters[chapterId].missions.length+' misi':chapters[chapterId].practice.length+' latihan'} Bab ${chapterId} akan dihapus. Progres bab lain dan menu lain tidak berubah.`,
+      message:`Status selesai dan jawaban benar pada ${isMission?(chapters[chapterId].missionGames?.length || chapters[chapterId].missions.length)+' misi':chapters[chapterId].practice.length+' latihan'} Bab ${chapterId} akan dihapus. Progres bab lain dan menu lain tidak berubah.`,
       continueLabel:'Ya, reset',laterLabel:'Batal',
       onContinue:()=>{
         clearCompletionTimer(menu, chapterId);
@@ -1095,8 +1288,8 @@
       const bar=document.querySelector('.chapter-quiz-status-panel .progress-track span');if(bar)bar.style.width=`${percent}%`;
       const dot=document.querySelector(`[data-chapter-quiz-jump="${question}"][data-chapter="${chapterId}"]`);if(dot)dot.classList.add('answered');
       const collect=document.querySelector(`[data-chapter-quiz-submit="${chapterId}"]`);if(collect&&answered===total)collect.disabled=false;
-      updatePicker('kuis');
-      const hint=document.querySelector('.chapter-quiz-hint');if(hint&&answered===total)hint.textContent='Semua jawaban sudah terisi. Kumpulkan kuis untuk melihat hasil dan pembahasan.';
+      updatePickerCard('kuis', chapterId);
+      const hint=document.querySelector('.chapter-quiz-hint');if(hint&&answered===total)hint.textContent='Semua jawaban sudah terisi. Kumpulkan kuis untuk melihat jawaban yang benar (hijau) dan pembahasan.';
       return;
     }
     if(target.dataset.chapterQuizJump!==undefined){const chapterId=Number(target.dataset.chapter),p=getState(chapterId);p.quiz.currentIndex=Number(target.dataset.chapterQuizJump);save();renderMenu('kuis');return;}
@@ -1114,5 +1307,24 @@
     if(page&&h1){page.dataset.originalHeading=h1.innerHTML;page.dataset.originalIntro=page.querySelector('.page-heading p')?.textContent||'';page.dataset.originalEyebrow=page.querySelector('.page-heading .eyebrow')?.textContent||'';}
     updatePicker(menu);renderMenu(menu);
   });
-  window.MisiChapters={chapters,selection,setSelection,renderMenu,ensureBab2SharedLayout};
+  function resetQuizAttemptsForContentUpdate() {
+    Object.keys(chapters).forEach(chapterId => {
+      const p = getState(Number(chapterId));
+      p.quiz = { answers:{}, submitted:false, score:null, questionCount:chapters[chapterId].quiz.length, currentIndex:0 };
+    });
+    save();
+  }
+  function remapQuizAnswers(maps) {
+    Object.entries(maps || {}).forEach(([chapterId, questionMaps]) => {
+      const p = getState(Number(chapterId));
+      if (!p.quiz || !p.quiz.answers) return;
+      Object.entries(p.quiz.answers).forEach(([questionIndex, oldOptionIndex]) => {
+        const qMap = questionMaps[Number(questionIndex)];
+        const next = qMap && qMap[Number(oldOptionIndex)];
+        if (Number.isInteger(next)) p.quiz.answers[questionIndex] = next;
+      });
+    });
+    save();
+  }
+  window.MisiChapters={chapters,selection,setSelection,renderMenu,ensureBab2SharedLayout,remapQuizAnswers,resetQuizAttemptsForContentUpdate};
 })();

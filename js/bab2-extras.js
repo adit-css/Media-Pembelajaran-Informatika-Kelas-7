@@ -96,7 +96,7 @@
       if(target.dataset.bab2WordLetter!==expected){target.classList.add('is-wrong');if(feedback){feedback.className='bab2-game-feedback error';feedback.textContent='Belum pas. Coba kepingan huruf lain.';}window.setTimeout(()=>target.classList.remove('is-wrong'),500);return;}
       target.disabled=true;target.classList.add('is-used');
       const slots=root.querySelectorAll('.bab2-word-slot');slots[chosen.length].textContent=expected;slots[chosen.length].classList.add('filled','pop-in');
-      if(chosen.length+1===answer.length){if(feedback){feedback.className='bab2-game-feedback success';feedback.textContent='Kata berhasil ditemukan! '+data.missions[0].explain;}app.markMissionDone(key,answer);render();}
+      if(chosen.length+1===answer.length){if(feedback){feedback.className='bab2-game-feedback success';feedback.textContent='Kata berhasil ditemukan! '+data.missions[0].explain;}app.markMissionDone(key,answer);}
       else if(feedback){feedback.className='bab2-game-feedback';feedback.textContent=`${chosen.length+1} dari ${answer.length} huruf berhasil dirangkai.`;}
       return;
     }
@@ -111,7 +111,7 @@
       const next=expected[selected.length];
       if(target.dataset.bab2ScheduleStep!==next){root?.querySelectorAll('.bab2-schedule-slot').forEach(slot=>{slot.removeAttribute('data-filled');slot.querySelector('b').textContent='Pilih kartu aktivitas';});root?.querySelectorAll('.bab2-schedule-tile').forEach(tile=>{tile.disabled=false;tile.classList.remove('is-used','is-wrong');});target.classList.add('is-wrong');if(feedback){feedback.className='bab2-game-feedback error';feedback.textContent='Jadwal belum tepat. Coba susun lagi dari awal.';}window.setTimeout(()=>target.classList.remove('is-wrong'),500);return;}
       const step=target.dataset.bab2ScheduleStep;const stepIndex=selected.length;const slot=root.querySelectorAll('.bab2-schedule-slot')[stepIndex];const label=target.querySelector('b').textContent;slot.dataset.filled=step;slot.querySelector('b').textContent=label;target.disabled=true;target.classList.add('is-used');
-      if(stepIndex+1===expected.length){if(feedback){feedback.className='bab2-game-feedback success';feedback.textContent='Jadwal berhasil disusun! '+data.missions[1].explain;}app.markMissionDone(key,expected.join('|'));render();}
+      if(stepIndex+1===expected.length){if(feedback){feedback.className='bab2-game-feedback success';feedback.textContent='Jadwal berhasil disusun! '+data.missions[1].explain;}app.markMissionDone(key,expected.join('|'));}
       else if(feedback){feedback.className='bab2-game-feedback';feedback.textContent=`${stepIndex+1} dari ${expected.length} aktivitas tersusun.`;}
       return;
     }

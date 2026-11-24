@@ -35,8 +35,8 @@
     "Alamat MAC",
     "Menerjemahkan kode sumber program",
     "Membuat cadangan file otomatis",
-    "Kolom subjek",
-    "Menentukan ukuran lampiran",
+    "Alamat penerima",
+    "Menentukan alamat penerima pesan",
     "Menggandakan halaman web",
     "Membuat grafik statistik",
     "Halaman web",
@@ -131,7 +131,7 @@
     "Memastikan kode tidak perlu diuji ulang",
     "Hanya satu sprite dan beberapa file musik",
     "Menyimpan nama proyek saja",
-    "Berjalan hanya setelah keyboard ditekan"
+    "Menjalankan skrip ketika proyek disimpan"
   ],
   "8": [
     "Menghapus semua risiko penggunaan internet",
@@ -139,11 +139,11 @@
     "Jumlah komentar yang diterima",
     "Meneruskan agar orang lain mengecek",
     "Mengubah dokumen tanpa koordinasi",
-    "Menyediakan informasi yang selalu benar",
+    "Membuat semua pengguna memiliki pendapat yang sama",
     "Menggunakan sumber belajar daring",
     "Menghapus nama sumber",
     "Warna kesukaan umum",
-    "Memahami tujuan penggunaan data tanpa membaca penjelasan",
+    "Menyetujui permintaan data tanpa memahami tujuannya",
     "Hanya unggahan foto cetak",
     "Mengedit dokumen anggota lain tanpa komunikasi",
     "Mengunggah kode OTP ke grup",
@@ -168,8 +168,8 @@
     "Input",
     "Menentukan warna meja rangkaian",
     "Dokumen untuk menilai anggota saja",
-    "Kriteria hasil dibandingkan dengan daftar kehadiran",
-    "Mengatur tampilan layar",
+    "Spesifikasi awal dibandingkan dengan jumlah anggota kelompok",
+    "Mengubah warna latar presentasi",
     "Membagikan tautan proyek",
     "Tampilan grafis",
     "Aktivitas yang hanya memakai papan sirkuit",
@@ -178,17 +178,29 @@
     "Menentukan kriteria setelah presentasi selesai"
   ]
 };
+  // Distraktor yang ditinjau ulang agar tidak kembar, tidak ambigu, dan masih satu topik.
+  const reviewedFourth = {
+    '3': {5:'Antarmuka yang menggunakan gerakan tubuh sebagai perintah',11:'Menentukan ukuran file lampiran',12:'Memasukkan alamat email tujuan'},
+    '4': {15:'Peranti komunikasi',16:'16'},
+    '5': {3:'A (tidak mengalami pergeseran)',10:'E-banking',11:'E-government'},
+    '7': {3:'Ukuran sprite',19:'Mengubah ukuran panggung secara otomatis'},
+    '8': {5:'Menghilangkan kebutuhan untuk memeriksa sumber informasi',9:'Menyetujui permintaan data tanpa mengetahui alasannya',14:'Menyebarkan tangkapan layar tanpa menyamarkan informasi pribadi'},
+    '9': {8:'Proses'}
+  };
   const chapters=window.MisiChapters?.chapters;
   if(!chapters)return;
   Object.entries(fourth).forEach(([id,options])=>{
     const quiz=chapters[id]?.quiz||[];
     quiz.forEach((item,index)=>{
       if(item.options.length<4){
-        let candidate=options[index];
-        if(item.options.includes(candidate)) candidate=`Pilihan lain yang tidak sesuai dengan konsep ${chapters[id].title.toLowerCase()}`;
+        const candidate=reviewedFourth[id]?.[index] || options[index];
         item.options.push(candidate);
       }
     });
+  });
+  Object.entries(reviewedFourth).forEach(([id,items])=>{
+    const quiz=chapters[id]?.quiz||[];
+    Object.entries(items).forEach(([index,value])=>{ if(quiz[Number(index)]&&quiz[Number(index)].options.length>=4) quiz[Number(index)].options[3]=value; });
   });
   ['kuis'].forEach(menu=>window.MisiChapters.renderMenu(menu));
 })();
