@@ -1,11 +1,11 @@
 <div align="center">
 
-# ✦ MISI ALGORITMA
+# ✦ JELAJAH ALGORITMA
 ### Petualangan Belajar Informatika Kelas VII
 
 **Belajar konsepnya. Jelajahi dunianya. Pecahkan tantangannya.**
 
-[🌐 **BUKA WEBSITE MISI ALGORITMA**](https://jelajah-algoritma.adits.workers.dev/)
+[🌐 **BUKA WEBSITE JELAJAH ALGORITMA**](https://jelajah-algoritma.adits.workers.dev/)
 
 ![Static Website](https://img.shields.io/badge/Website-Online-78d5a7?style=for-the-badge)
 ![Bab](https://img.shields.io/badge/Bab-9-82c8ff?style=for-the-badge)
@@ -19,7 +19,7 @@
 
 ## 🚀 Tentang proyek
 
-**MISI ALGORITMA** adalah media pembelajaran interaktif Informatika kelas VII SMP. Siswa belajar lewat materi visual, cerita, misi, puzzle, mini-game, latihan logika, dan kuis. Setiap bab memiliki tema petualangan yang mengikuti materi bab tersebut.
+**Jelajah Algoritma** adalah media pembelajaran interaktif Informatika kelas VII SMP. Siswa belajar lewat materi visual, cerita, misi, puzzle, mini-game, latihan logika, dan kuis. Setiap bab memiliki tema petualangan yang mengikuti materi bab tersebut.
 
 > **Mulai petualangan:** [jelajah-algoritma.adits.workers.dev](https://jelajah-algoritma.adits.workers.dev/)
 
@@ -53,10 +53,10 @@ Setiap bab memiliki menu **Materi, Misi, Latihan, dan Kuis**. Progres setiap bab
 
 - **Belajar per bab.** Pilih bab yang sedang dipelajari dari setiap menu.
 - **Materi visual.** Konsep dilengkapi contoh dan ilustrasi yang berkaitan dengan kehidupan sehari-hari.
-- **Arena misi tematik.** Setiap bab memiliki dunia permainan yang berbeda: workshop tim, desktop digital, laboratorium sistem komputer, peta jaringan, observatorium data, Scratch playground, ruang keamanan digital, dan maker studio. Bab 2 memiliki labirin robot, pola gelang, debugging, puzzle, dan optimasi penjadwalan.
-- **Interaksi langsung.** Susun langkah, pasangkan kartu, pilah kategori, cari kejanggalan, jalankan strategi, dan navigasikan karakter menuju tujuan. Jawaban benar pada Misi dan Latihan langsung ditandai hijau serta dikunci; jawaban yang belum tepat ditandai merah dan dapat dicoba kembali.
-- **Latihan bervariasi.** Lima aktivitas awal setiap bab berupa mini-game dengan mekanik berbeda, diikuti sepuluh latihan logika berbasis situasi. Pilihan latihan ditampilkan langsung tanpa label A/B/C.
-- **Kuis bertahap.** Setiap kuis berisi 20 pertanyaan dengan empat pilihan A, B, C, dan D. Pilihan yang dipilih ditandai biru selama pengerjaan. Setelah dikumpulkan, kunci jawaban ditandai hijau, pilihan salah yang dipilih ditandai merah, dan setiap soal menampilkan pembahasan.
+- **Arena misi tematik.** Misi di setiap bab punya tema berbeda: workshop tim, robot, desktop digital, laboratorium sistem komputer, peta jaringan, observatorium data, Scratch playground, keamanan digital, dan maker studio.
+- **Interaksi langsung.** Susun langkah, pasangkan kartu, pilah kategori, cari kejanggalan, pilih strategi, dan navigasikan karakter menuju tujuan.
+- **Latihan bervariasi.** Lima aktivitas awal setiap bab berupa mini-game dengan mekanik berbeda, diikuti sepuluh latihan logika berbasis situasi.
+- **Kuis bertahap.** Setiap kuis berisi 20 soal dengan pilihan A, B, C, dan D. Nilai serta pembahasan ditampilkan setelah kuis dikumpulkan.
 - **Progres terpisah.** Progres Materi, Misi, Latihan, dan Kuis disimpan per bab. Reset hanya memengaruhi bagian dan bab yang dipilih.
 - **Responsif.** Tampilan menyesuaikan laptop, tablet, dan ponsel.
 
@@ -82,9 +82,9 @@ Proyek ini menggunakan teknologi web statis:
 - CSS
 - JavaScript
 - `localStorage` untuk menyimpan progres di browser
-- Pemeriksaan kunci, distribusi opsi, dan revisi pertanyaan kuis melalui skrip JavaScript lokal
+- Cloudflare Workers untuk publikasi website
 
-Tidak membutuhkan database, backend, instalasi aplikasi, atau akun siswa. Website dipublikasikan melalui Cloudflare Workers.
+Tidak membutuhkan database, backend, instalasi aplikasi, atau akun siswa.
 
 ## ▶️ Menjalankan di komputer
 
@@ -95,8 +95,11 @@ Tidak membutuhkan database, backend, instalasi aplikasi, atau akun siswa. Websit
 Struktur folder:
 
 ```text
-misi-algoritma/
+jelajah-algoritma/
 ├── index.html
+├── favicon-96.png
+├── robots.txt
+├── sitemap.xml
 ├── css/
 │   └── style.css
 ├── js/
@@ -114,6 +117,20 @@ misi-algoritma/
 ├── README.md
 └── PANDUAN-PENGGUNAAN.md
 ```
+
+## 🔎 Google Search dan SEO
+
+Website dilengkapi judul halaman, deskripsi, canonical URL, metadata saat tautan dibagikan, data terstruktur `WebSite` dan `LearningResource`, favicon, `robots.txt`, serta `sitemap.xml`.
+
+Untuk mendaftarkan website ke Google Search Console:
+
+1. Tambahkan properti **Awalan URL (URL Prefix)** dengan alamat `https://jelajah-algoritma.adits.workers.dev/`.
+2. Pilih metode verifikasi **Tag HTML**.
+3. Tempel tag verifikasi yang diberikan Google ke bagian `<head>` pada `index.html`, tepat di bawah komentar `Google Search Console`.
+4. Simpan, push ke GitHub, deploy ke Cloudflare, lalu klik **Verifikasi** di Search Console.
+5. Setelah terverifikasi, kirim sitemap `https://jelajah-algoritma.adits.workers.dev/sitemap.xml` melalui menu Sitemaps.
+
+Tag verifikasi HTML memang terlihat di source halaman. Tag tersebut bukan password atau API key; jangan mengunggah kredensial akun atau private key.
 
 ## 📈 Progres dan penyimpanan
 
@@ -137,10 +154,11 @@ Judul bab dan cakupan bahasan mengikuti buku *Informatika untuk SMP Kelas VII* (
 ## 💬 Masukan dan laporan bug
 
 Saat menemukan masalah, sertakan:
+
 1. Menu dan bab tempat masalah ditemukan.
 2. Nomor aktivitas atau judul tantangan.
 3. Langkah yang dilakukan sebelum masalah muncul.
-4. Hasil yang terjadi dan hasil yang seharusnya.
+4. Hasil yang terjadi dan hasil yang diharapkan.
 5. Perangkat dan browser yang digunakan.
 6. Screenshot atau rekaman layar bila memungkinkan.
 
@@ -149,7 +167,7 @@ Saat menemukan masalah, sertakan:
 <div align="center">
 
 **Terima kasih sudah ikut menjelajah!** ✦  
-[🌐 **Buka MISI ALGORITMA**](https://jelajah-algoritma.adits.workers.dev/)
+[🌐 **Buka Jelajah Algoritma**](https://jelajah-algoritma.adits.workers.dev/)
 
 *Belajar berpikir, bukan sekadar menghafal.*
 

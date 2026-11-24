@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jelajah-algoritma.adits.workers.dev/sitemap.xml

@@ -1,8 +1,8 @@
-# Panduan Penggunaan MISI ALGORITMA
+# Panduan Penggunaan JELAJAH ALGORITMA
 
 ## Untuk siswa
 
-1. Buka website [MISI ALGORITMA](https://jelajah-algoritma.adits.workers.dev/).
+1. Buka website [JELAJAH ALGORITMA](https://jelajah-algoritma.adits.workers.dev/).
 2. Pilih salah satu bab pada menu Materi, Misi, Latihan, atau Kuis.
 3. Baca materi dan perhatikan contoh yang disediakan.
 4. Kerjakan tantangan Misi sesuai instruksi pada layar. Beberapa misi menggunakan kartu, susunan langkah, pengelompokan, atau tombol arah.
@@ -40,3 +40,17 @@ Sertakan informasi berikut agar masalah mudah diperiksa:
 4. Hasil yang muncul dan hasil yang diharapkan.
 5. Jenis perangkat dan browser.
 6. Screenshot atau rekaman layar bila memungkinkan.
+
+## Mendaftarkan website ke Google Search Console
+
+1. Buka [Google Search Console](https://search.google.com/search-console).
+2. Pilih jenis properti **Awalan URL (URL Prefix)**.
+3. Masukkan `https://jelajah-algoritma.adits.workers.dev/`.
+4. Pilih metode verifikasi **Tag HTML** dan salin tag meta yang diberikan Google.
+5. Buka `index.html`, lalu tempel tag tersebut di dalam `<head>`, tepat di bawah komentar `Google Search Console`. Salin tag persis seperti yang diberikan Google; jangan mengubah isi `content`.
+6. Simpan perubahan, commit/push ke GitHub, lalu deploy ulang aset website ke Cloudflare Worker yang sama.
+7. Kembali ke Search Console dan klik **Verifikasi**.
+8. Setelah verifikasi berhasil, buka menu **Sitemaps** dan kirim `sitemap.xml`.
+
+**Tentang kode verifikasi:** tag HTML ini memang harus dapat dibaca dari source website. Tag tersebut bukan kata sandi, API key, atau private key. Boleh ikut terunggah di repository Public karena Google memakainya untuk memeriksa bahwa kamu dapat mengubah halaman website. Jangan pernah membagikan password Google, token akses, atau private key. Pertahankan tag verifikasi di halaman selama kamu masih ingin mempertahankan verifikasi Search Console.
+
