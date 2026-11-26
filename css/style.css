@@ -1607,3 +1607,56 @@ body.modal-open{overflow:hidden}
     padding: 16px 13px;
   }
 }
+
+/* V27 — Kartu bab terpilih tetap berada di alur normal halaman pada semua menu.
+   Tidak sticky/fixed agar tidak menutupi materi saat pengguna menggulir. */
+.chapter-picker.is-focused{
+  position:relative;top:auto;z-index:auto;
+  border-color:rgba(198,243,107,.28);
+  background:linear-gradient(135deg,rgba(27,43,68,.98),rgba(18,31,51,.98));
+  box-shadow:0 12px 30px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.04);
+}
+.chapter-picker-current{
+  display:grid;grid-template-columns:110px minmax(0,1fr) auto;align-items:center;gap:18px;
+  padding:3px 2px;
+}
+.chapter-picker-current-id{display:grid;gap:5px}
+.chapter-picker-current-id .mini-label{font-size:9px;letter-spacing:.9px}
+.chapter-picker-current-id strong{font:700 25px var(--display);letter-spacing:-.6px;color:var(--lime)}
+.chapter-picker-current-copy{display:grid;gap:5px;min-width:0}
+.chapter-picker-current-copy>strong{font:600 16px/1.35 var(--display);color:var(--text)}
+.chapter-picker-current-copy>span{color:var(--muted);font-size:11px;line-height:1.45}
+.chapter-current-progress{display:flex;align-items:center;gap:9px;max-width:310px}
+.chapter-current-progress i{display:block;flex:1;height:5px;overflow:hidden;border-radius:8px;background:rgba(255,255,255,.09)}
+.chapter-current-progress i b{display:block;height:100%;border-radius:inherit;background:var(--lime);transition:width .25s}
+.chapter-current-progress small{font:9px var(--mono);color:var(--lime)}
+.chapter-picker-current-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.chapter-summary-link{color:var(--blue);font:10px var(--mono);text-decoration:none;white-space:nowrap}
+.chapter-summary-link:hover{text-decoration:underline}
+.chapter-picker-grid .chapter-pick{position:relative}
+.chapter-pick-open{font:8px var(--mono);letter-spacing:.75px;color:var(--blue);opacity:.8}
+.chapter-pick:hover .chapter-pick-open{color:var(--lime);opacity:1}
+.chapter-discovery{margin:38px 0 30px}
+.chapter-discovery .section-intro{margin-bottom:17px}
+.chapter-discovery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.chapter-discovery-card{display:grid;gap:8px;min-width:0;padding:17px 18px;border:1px solid var(--line);border-radius:12px;background:rgba(26,42,67,.62);color:var(--text);text-decoration:none;transition:transform .18s,border-color .18s,background .18s}
+.chapter-discovery-card:hover{transform:translateY(-2px);border-color:rgba(198,243,107,.48);background:rgba(33,53,80,.9)}
+.chapter-discovery-card>span{font:9px var(--mono);letter-spacing:1px;color:var(--lime)}
+.chapter-discovery-card strong{font:600 15px/1.35 var(--display)}
+.chapter-discovery-card small{font-size:10px;line-height:1.5;color:var(--muted)}
+.chapter-discovery-note{margin:13px 0 0;color:var(--muted);font-size:11px;line-height:1.7}
+.chapter-cover{scroll-margin-top:158px}
+@media(max-width:850px){.chapter-discovery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+  .chapter-picker-current{grid-template-columns:1fr auto;gap:11px;padding:2px 0}
+  .chapter-picker-current-id{grid-column:1;grid-row:1}
+  .chapter-picker-current-id strong{font-size:21px}
+  .chapter-picker-current-copy{grid-column:1/-1;grid-row:2}
+  .chapter-picker-current-actions{grid-column:1/-1;grid-row:3;justify-content:flex-start;gap:14px}
+  .chapter-picker-current-actions .btn{flex:1}
+  .chapter-picker-current-copy>strong{font-size:14px}
+  .chapter-discovery{margin:28px 0 24px}
+  .chapter-discovery-grid{grid-template-columns:1fr;gap:8px}
+  .chapter-discovery-card{padding:14px 15px}
+  .chapter-discovery-card strong{font-size:14px}
+}

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://jelajah-algoritma.adits.workers.dev/</loc>
-  </url>
+  <url><loc>https://jelajah-algoritma.adits.workers.dev/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://jelajah-algoritma.adits.workers.dev/bab-01.html</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://jelajah-algoritma.adits.workers.dev/bab-02.html</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://jelajah-algoritma.adits.workers.dev/bab-03.html</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://jelajah-algoritma.adits.workers.dev/bab-04.html</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://jelajah-algoritma.adits.workers.dev/bab-05.html</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://jelajah-algoritma.adits.workers.dev/bab-06.html</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://jelajah-algoritma.adits.workers.dev/bab-07.html</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://jelajah-algoritma.adits.workers.dev/bab-08.html</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://jelajah-algoritma.adits.workers.dev/bab-09.html</loc><lastmod>2026-11-26</lastmod></url>
 </urlset>

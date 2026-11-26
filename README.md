@@ -19,25 +19,25 @@
 
 ## 🚀 Tentang proyek
 
-**Jelajah Algoritma** adalah media pembelajaran interaktif Informatika kelas VII SMP. Siswa belajar lewat materi visual, cerita, misi, puzzle, mini-game, latihan logika, dan kuis. Setiap bab memiliki tema petualangan yang mengikuti materi bab tersebut.
+**Jelajah Algoritma** adalah media pembelajaran interaktif Informatika kelas VII SMP. Siswa belajar melalui materi visual, cerita, misi, puzzle, mini-game, latihan logika, dan kuis. Setiap bab memiliki tema aktivitas yang berkaitan dengan pokok bahasannya.
 
 > **Mulai petualangan:** [jelajah-algoritma.adits.workers.dev](https://jelajah-algoritma.adits.workers.dev/)
 
 ## 🧭 Jelajahi 9 bab
 
-| Bab | Topik pembelajaran |
-|---|---|
-| 01 | Informatika dan Keterampilan Generik |
-| 02 | Berpikir Komputasional |
-| 03 | Teknologi Informasi dan Komunikasi |
-| 04 | Sistem Komputer |
-| 05 | Jaringan Komputer dan Internet |
-| 06 | Analisis Data |
-| 07 | Algoritma dan Pemrograman |
-| 08 | Dampak Sosial Informatika |
-| 09 | Praktika Lintas Bidang Informatika |
+| Bab | Topik pembelajaran | Ringkasan bab |
+|---|---|---|
+| 01 | Informatika dan Keterampilan Generik | [Buka](https://jelajah-algoritma.adits.workers.dev/bab-01.html) |
+| 02 | Berpikir Komputasional | [Buka](https://jelajah-algoritma.adits.workers.dev/bab-02.html) |
+| 03 | Teknologi Informasi dan Komunikasi | [Buka](https://jelajah-algoritma.adits.workers.dev/bab-03.html) |
+| 04 | Sistem Komputer | [Buka](https://jelajah-algoritma.adits.workers.dev/bab-04.html) |
+| 05 | Jaringan Komputer dan Internet | [Buka](https://jelajah-algoritma.adits.workers.dev/bab-05.html) |
+| 06 | Analisis Data | [Buka](https://jelajah-algoritma.adits.workers.dev/bab-06.html) |
+| 07 | Algoritma dan Pemrograman | [Buka](https://jelajah-algoritma.adits.workers.dev/bab-07.html) |
+| 08 | Dampak Sosial Informatika | [Buka](https://jelajah-algoritma.adits.workers.dev/bab-08.html) |
+| 09 | Praktika Lintas Bidang Informatika | [Buka](https://jelajah-algoritma.adits.workers.dev/bab-09.html) |
 
-Setiap bab memiliki menu **Materi, Misi, Latihan, dan Kuis**. Progres setiap bab disimpan secara terpisah.
+Setiap halaman ringkasan bab memiliki tautan langsung ke Materi, Misi, Latihan, dan Kuis pada bab yang sama.
 
 ## 🎮 Isi petualangan
 
@@ -51,12 +51,14 @@ Setiap bab memiliki menu **Materi, Misi, Latihan, dan Kuis**. Progres setiap bab
 
 ## ✨ Fitur utama
 
-- **Belajar per bab.** Pilih bab yang sedang dipelajari dari setiap menu.
+- **Navigasi fokus per bab.** Pilih sebuah bab di menu Materi, Misi, Latihan, atau Kuis. Setelah dipilih, daftar bab menutup agar kamu fokus mengerjakan bagian tersebut.
+- **Ganti bab kapan saja.** Tombol **Ganti Bab** tersedia di bagian atas halaman fokus; kamu tidak perlu kembali ke beranda untuk memilih bab lain.
+- **Halaman ringkasan khusus.** Kesembilan bab mempunyai URL tersendiri, berisi tujuan, pokok bahasan, contoh penerapan, serta tautan langsung ke aktivitas bab terkait.
 - **Materi visual.** Konsep dilengkapi contoh dan ilustrasi yang berkaitan dengan kehidupan sehari-hari.
-- **Arena misi tematik.** Misi di setiap bab punya tema berbeda: workshop tim, robot, desktop digital, laboratorium sistem komputer, peta jaringan, observatorium data, Scratch playground, keamanan digital, dan maker studio.
+- **Misi tematik.** Setiap bab punya tema berbeda: workshop tim, robot, desktop digital, laboratorium sistem komputer, peta jaringan, observatorium data, Scratch playground, keamanan digital, dan maker studio.
 - **Interaksi langsung.** Susun langkah, pasangkan kartu, pilah kategori, cari kejanggalan, pilih strategi, dan navigasikan karakter menuju tujuan.
 - **Latihan bervariasi.** Lima aktivitas awal setiap bab berupa mini-game dengan mekanik berbeda, diikuti sepuluh latihan logika berbasis situasi.
-- **Kuis bertahap.** Setiap kuis berisi 20 soal dengan pilihan A, B, C, dan D. Nilai serta pembahasan ditampilkan setelah kuis dikumpulkan.
+- **Kuis bertahap.** Setiap kuis berisi 20 soal pilihan ganda. Nilai serta pembahasan ditampilkan setelah kuis dikumpulkan.
 - **Progres terpisah.** Progres Materi, Misi, Latihan, dan Kuis disimpan per bab. Reset hanya memengaruhi bagian dan bab yang dipilih.
 - **Responsif.** Tampilan menyesuaikan laptop, tablet, dan ponsel.
 
@@ -97,11 +99,22 @@ Struktur folder:
 ```text
 jelajah-algoritma/
 ├── index.html
+├── bab-01.html
+├── bab-02.html
+├── bab-03.html
+├── bab-04.html
+├── bab-05.html
+├── bab-06.html
+├── bab-07.html
+├── bab-08.html
+├── bab-09.html
 ├── favicon-96.png
+├── googleb0cd1f5fce8c68da.html
 ├── robots.txt
 ├── sitemap.xml
 ├── css/
-│   └── style.css
+│   ├── style.css
+│   └── chapter-pages.css
 ├── js/
 │   ├── main.js
 │   ├── game.js
@@ -120,17 +133,15 @@ jelajah-algoritma/
 
 ## 🔎 Google Search dan SEO
 
-Website dilengkapi judul halaman, deskripsi, canonical URL, metadata saat tautan dibagikan, data terstruktur `WebSite` dan `LearningResource`, favicon, `robots.txt`, serta `sitemap.xml`.
+Website memiliki metadata halaman, canonical URL, Open Graph, data terstruktur, favicon, `robots.txt`, dan sitemap. Selain halaman utama, terdapat sembilan halaman ringkasan bab dengan URL permanen.
 
-Untuk mendaftarkan website ke Google Search Console:
+- Sitemap: [https://jelajah-algoritma.adits.workers.dev/sitemap.xml](https://jelajah-algoritma.adits.workers.dev/sitemap.xml)
+- Robots: [https://jelajah-algoritma.adits.workers.dev/robots.txt](https://jelajah-algoritma.adits.workers.dev/robots.txt)
+- Pemeriksaan indeks: [Google Search Console](https://search.google.com/search-console)
 
-1. Tambahkan properti **Awalan URL (URL Prefix)** dengan alamat `https://jelajah-algoritma.adits.workers.dev/`.
-2. Pilih metode verifikasi **Tag HTML**.
-3. Tempel tag verifikasi yang diberikan Google ke bagian `<head>` pada `index.html`, tepat di bawah komentar `Google Search Console`.
-4. Simpan, push ke GitHub, deploy ke Cloudflare, lalu klik **Verifikasi** di Search Console.
-5. Setelah terverifikasi, kirim sitemap `https://jelajah-algoritma.adits.workers.dev/sitemap.xml` melalui menu Sitemaps.
+Setelah memperbarui website, deploy seluruh berkas ke Cloudflare Worker yang sama. Kemudian buka Search Console → **Sitemaps** dan kirim ulang `sitemap.xml` agar Google dapat menemukan sembilan URL bab. Pengiriman sitemap maupun permintaan pengindeksan tidak menjamin halaman langsung muncul di Google.
 
-Tag verifikasi HTML memang terlihat di source halaman. Tag tersebut bukan password atau API key; jangan mengunggah kredensial akun atau private key.
+Berkas `googleb0cd1f5fce8c68da.html` digunakan untuk verifikasi Search Console. Pertahankan berkas tersebut pada root website selama properti Search Console masih digunakan.
 
 ## 📈 Progres dan penyimpanan
 
@@ -141,11 +152,10 @@ Tag verifikasi HTML memang terlihat di source halaman. Tag tersebut bukan passwo
 
 ## 🎲 Cara belajar yang disarankan
 
-1. Pilih bab yang sedang dipelajari.
-2. Baca materi dan lihat contoh visual.
-3. Masuk ke Misi dan jelajahi tantangan sesuai tema bab.
-4. Kerjakan mini-game dan latihan logika.
-5. Akhiri dengan Kuis 20 soal untuk melihat hasil pemahaman.
+1. Masuk ke menu Materi, Misi, Latihan, atau Kuis.
+2. Pilih bab yang ingin dipelajari; tampilan akan beralih ke bab tersebut.
+3. Gunakan **Ganti Bab** untuk memilih bab lain tanpa harus kembali ke beranda.
+4. Baca materi, kerjakan misi, lanjutkan latihan, lalu akhiri dengan Kuis 20 soal.
 
 ## 📚 Acuan materi
 

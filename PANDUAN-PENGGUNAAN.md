@@ -1,27 +1,26 @@
-# Panduan Penggunaan JELAJAH ALGORITMA
+# Panduan Penggunaan Jelajah Algoritma
 
 ## Untuk siswa
 
-1. Buka website [JELAJAH ALGORITMA](https://jelajah-algoritma.adits.workers.dev/).
-2. Pilih salah satu bab pada menu Materi, Misi, Latihan, atau Kuis.
-3. Baca materi dan perhatikan contoh yang disediakan.
-4. Kerjakan tantangan Misi sesuai instruksi pada layar. Beberapa misi menggunakan kartu, susunan langkah, pengelompokan, atau tombol arah.
-5. Selesaikan Latihan. Lima aktivitas pertama pada setiap bab berupa mini-game, kemudian dilanjutkan latihan logika.
-6. Kerjakan Kuis 20 soal. Jawaban tersimpan selama kuis berlangsung. Setelah semua pertanyaan dijawab, kumpulkan kuis untuk melihat nilai dan pembahasan.
+1. Buka [Jelajah Algoritma](https://jelajah-algoritma.adits.workers.dev/).
+2. Masuk ke menu **Materi**, **Misi**, **Latihan**, atau **Kuis**.
+3. Pilih salah satu dari sembilan bab. Setelah dipilih, daftar bab menutup dan halaman langsung menampilkan konten bab tersebut.
+4. Untuk berpindah ke bab lain, tekan tombol **Ganti Bab** yang berada di bagian atas tampilan fokus. Kamu tidak perlu kembali ke beranda.
+5. Pada halaman ringkasan bab, gunakan tombol Materi, Misi, Latihan, atau Kuis untuk langsung membuka bagian yang sesuai.
+6. Kerjakan aktivitas sesuai instruksi pada layar. Progres tersimpan otomatis pada browser yang digunakan.
 
 ## Status jawaban
 
-- Pada Misi dan Latihan, jawaban benar langsung ditandai hijau dan dikunci. Jawaban yang belum tepat ditandai merah dan masih dapat dicoba kembali.
+- Pada Misi dan Latihan, jawaban benar ditandai hijau dan dikunci. Jawaban yang belum tepat ditandai merah dan masih dapat dicoba kembali.
 - Pada Kuis, pilihan yang dipilih berwarna biru selama pengerjaan agar kunci tidak terbocorkan. Setelah kuis dikumpulkan, jawaban benar ditandai hijau dan pilihan salah yang dipilih ditandai merah, disertai pembahasan.
-- Pada permainan susun langkah, kartu sumber sengaja diacak tanpa nomor. Pilih kartu dari langkah paling awal; nomor urutan hanya muncul pada area susunanmu. Periksa setelah seluruh kartu dipilih.
+- Pada permainan susun langkah, kartu sumber sengaja diacak tanpa nomor. Nomor urutan hanya muncul pada area susunanmu.
 
 ## Progres dan reset
 
 - Progres tersimpan secara lokal pada browser dan perangkat yang digunakan.
 - Progres antarperangkat atau antar-browser tidak tersinkron.
-- Karena bank soal Kuis direvisi untuk memperjelas pertanyaan dan kunci, percobaan/nilai Kuis lama akan direset satu kali saat pembaruan ini pertama kali dimuat. Progres Misi dan Latihan tidak dihapus.
-- Tombol Reset Misi dan Reset Latihan terpisah untuk setiap bab.
-- Reset hanya menghapus progres pada menu dan bab yang sedang dipilih. Periksa konfirmasi sebelum melanjutkan.
+- Progres Materi, Misi, Latihan, dan Kuis disimpan per bab.
+- Tombol Reset Misi dan Reset Latihan hanya menghapus progres pada menu dan bab yang sedang dipilih. Periksa konfirmasi sebelum melanjutkan.
 - Menghapus data situs atau penyimpanan browser dapat menghapus progres lokal.
 
 ## Untuk guru / penguji
@@ -41,16 +40,15 @@ Sertakan informasi berikut agar masalah mudah diperiksa:
 5. Jenis perangkat dan browser.
 6. Screenshot atau rekaman layar bila memungkinkan.
 
-## Mendaftarkan website ke Google Search Console
+## Google Search Console
+
+Website telah menyertakan berkas verifikasi HTML `googleb0cd1f5fce8c68da.html` pada folder utama. Jangan menghapus atau mengganti nama berkas tersebut selama masih digunakan untuk verifikasi Search Console.
+
+Setelah deploy pembaruan:
 
 1. Buka [Google Search Console](https://search.google.com/search-console).
-2. Pilih jenis properti **Awalan URL (URL Prefix)**.
-3. Masukkan `https://jelajah-algoritma.adits.workers.dev/`.
-4. Pilih metode verifikasi **Tag HTML** dan salin tag meta yang diberikan Google.
-5. Buka `index.html`, lalu tempel tag tersebut di dalam `<head>`, tepat di bawah komentar `Google Search Console`. Salin tag persis seperti yang diberikan Google; jangan mengubah isi `content`.
-6. Simpan perubahan, commit/push ke GitHub, lalu deploy ulang aset website ke Cloudflare Worker yang sama.
-7. Kembali ke Search Console dan klik **Verifikasi**.
-8. Setelah verifikasi berhasil, buka menu **Sitemaps** dan kirim `sitemap.xml`.
+2. Pilih properti `https://jelajah-algoritma.adits.workers.dev/`.
+3. Buka menu **Sitemaps** dan kirim `sitemap.xml` jika status sitemap belum memuat daftar URL terbaru.
+4. Gunakan **Inspeksi URL** untuk memeriksa halaman utama atau salah satu URL bab. Pengindeksan Google membutuhkan waktu dan tidak dijamin langsung terjadi setelah sitemap dikirim.
 
-**Tentang kode verifikasi:** tag HTML ini memang harus dapat dibaca dari source website. Tag tersebut bukan kata sandi, API key, atau private key. Boleh ikut terunggah di repository Public karena Google memakainya untuk memeriksa bahwa kamu dapat mengubah halaman website. Jangan pernah membagikan password Google, token akses, atau private key. Pertahankan tag verifikasi di halaman selama kamu masih ingin mempertahankan verifikasi Search Console.
-
+Sitemap: https://jelajah-algoritma.adits.workers.dev/sitemap.xml

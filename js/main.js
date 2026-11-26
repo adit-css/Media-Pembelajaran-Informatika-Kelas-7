@@ -141,6 +141,7 @@
     document.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', link.dataset.page === pageName));
     document.getElementById('mainNav').classList.remove('open');
     document.getElementById('menuToggle').setAttribute('aria-expanded', 'false');
+    window.MisiChapters?.onNavigate?.(pageName);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 

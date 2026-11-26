@@ -3,6 +3,7 @@
 
   const CHAPTER_KEY = 'misiAlgoritmaChapterProgressV4';
   const SELECTION_KEY = 'misiAlgoritmaChapterSelectionV1';
+  const FOCUS_KEY = 'misiAlgoritmaChapterFocusV1';
   const chapters = {
     1: {
       title: 'Informatika dan Keterampilan Generik', short: 'Informatika & kerja tim', theme: 'Kenali informatika dan belajar bekerja sama.',
@@ -235,6 +236,10 @@
     try { return { ...defaultSelection, ...(JSON.parse(localStorage.getItem(SELECTION_KEY) || '{}')) }; }
     catch { return { ...defaultSelection }; }
   })();
+  const focusState = (() => {
+    try { return { materi:false, misi:false, latihan:false, kuis:false, ...(JSON.parse(localStorage.getItem(FOCUS_KEY) || '{}')) }; }
+    catch { return { materi:false, misi:false, latihan:false, kuis:false }; }
+  })();
   const completionTimers = new Map();
   const missionAdvanceTimers = new Map();
   const practiceGameSessions = new Map();
@@ -254,7 +259,7 @@
   };
 
   function save() {
-    try { localStorage.setItem(CHAPTER_KEY, JSON.stringify(state)); localStorage.setItem(SELECTION_KEY, JSON.stringify(selection)); }
+    try { localStorage.setItem(CHAPTER_KEY, JSON.stringify(state)); localStorage.setItem(SELECTION_KEY, JSON.stringify(selection)); localStorage.setItem(FOCUS_KEY, JSON.stringify(focusState)); }
     catch (error) { console.warn('Progres per bab tidak dapat disimpan:', error); }
   }
   function getState(chapterId) {
@@ -329,25 +334,50 @@
   }
 
   function pickerHtml(menu) {
-    return `<div class="chapter-picker-head"><div><span class="mini-label">PILIH BAB PEMBELAJARAN</span><p>Pilih bab yang ingin kamu pelajari. Progres setiap bab tersimpan terpisah.</p></div><span class="chapter-count">9 BAB</span></div><div class="chapter-picker-grid">${Array.from({length:9},(_,i)=>i+1).map(id=>{
+    const chapterId = Number(selection[menu]);
+    const current = chapterId === 2
+      ? { title:'Berpikir Komputasional', short:'Algoritma & pola' }
+      : chapters[chapterId];
+    if (focusState[menu] && current) {
+      const percent = progressFor(menu, chapterId);
+      const status = statusFor(menu, chapterId);
+      const pageUrl = `/bab-${String(chapterId).padStart(2,'0')}.html`;
+      return `<div class="chapter-picker-current">
+        <div class="chapter-picker-current-id"><span class="mini-label">SEDANG DIPELAJARI</span><strong>BAB ${String(chapterId).padStart(2,'0')}</strong></div>
+        <div class="chapter-picker-current-copy"><strong>${escapeHtml(current.title)}</strong><span>${escapeHtml(current.short || current.theme || 'Informatika kelas VII')} · ${escapeHtml(status)}</span><div class="chapter-current-progress"><i><b style="width:${percent}%"></b></i><small>${percent}%</small></div></div>
+        <div class="chapter-picker-current-actions"><button type="button" class="btn btn-small btn-ghost" data-chapter-change="${menu}">⇄ Ganti Bab</button><a class="chapter-summary-link" href="${pageUrl}">Ringkasan Bab ↗</a></div>
+      </div>`;
+    }
+    return `<div class="chapter-picker-head"><div><span class="mini-label">PILIH BAB PEMBELAJARAN</span><p>Pilih satu bab untuk langsung masuk ke ruang belajarnya. Gunakan tombol Ganti Bab kapan saja untuk berpindah.</p></div><span class="chapter-count">9 BAB</span></div><div class="chapter-picker-grid">${Array.from({length:9},(_,i)=>i+1).map(id=>{
       const c = id === 2 ? {title:'Berpikir Komputasional', short:'Algoritma & pola'} : chapters[id];
-      const active = Number(selection[menu]) === id;
+      const active = Boolean(focusState[menu]) && Number(selection[menu]) === id;
       const percent = progressFor(menu,id);
-      return `<button type="button" class="chapter-pick ${active?'active':''}" data-chapter-select="${menu}" data-chapter="${id}" aria-pressed="${active}"><span class="chapter-pick-no">BAB ${String(id).padStart(2,'0')}</span><strong>${c.title}</strong><span class="chapter-pick-progress"><small>${statusFor(menu,id)}</small><i><b style="width:${percent}%"></b></i></span></button>`;
+      return `<button type="button" class="chapter-pick ${active?'active':''}" data-chapter-select="${menu}" data-chapter="${id}" aria-pressed="${active}"><span class="chapter-pick-no">BAB ${String(id).padStart(2,'0')}</span><strong>${escapeHtml(c.title)}</strong><span class="chapter-pick-progress"><small>${statusFor(menu,id)}</small><i><b style="width:${percent}%"></b></i></span><span class="chapter-pick-open">BUKA BAB ↗</span></button>`;
     }).join('')}</div>`;
   }
   function updatePicker(menu) {
     const el = document.querySelector(`[data-chapter-picker="${menu}"]`);
-    if (el) el.innerHTML = pickerHtml(menu);
+    if (el) {
+      el.classList.toggle('is-focused', Boolean(focusState[menu]));
+      el.innerHTML = pickerHtml(menu);
+    }
   }
   function updatePickerCard(menu, chapterId) {
-    const card = document.querySelector(`[data-chapter-picker="${menu}"] .chapter-pick[data-chapter="${chapterId}"]`);
-    if (!card) return;
+    const picker = document.querySelector(`[data-chapter-picker="${menu}"]`);
+    if (!picker) return;
     const percent = progressFor(menu, chapterId);
-    const status = card.querySelector('.chapter-pick-progress small');
-    const bar = card.querySelector('.chapter-pick-progress i b');
-    if (status) status.textContent = statusFor(menu, chapterId);
+    const statusText = statusFor(menu, chapterId);
+    const card = picker.querySelector(`.chapter-pick[data-chapter="${chapterId}"]`);
+    const status = card?.querySelector('.chapter-pick-progress small');
+    const bar = card?.querySelector('.chapter-pick-progress i b');
+    if (status) status.textContent = statusText;
     if (bar) bar.style.width = `${percent}%`;
+    const currentStatus = picker.querySelector('.chapter-picker-current-copy > span');
+    const currentBar = picker.querySelector('.chapter-current-progress i b');
+    const currentPercent = picker.querySelector('.chapter-current-progress small');
+    if (currentStatus) currentStatus.textContent = `${chapterId === 2 ? 'Algoritma & pola' : (chapters[chapterId]?.short || chapters[chapterId]?.theme || 'Informatika kelas VII')} · ${statusText}`;
+    if (currentBar) currentBar.style.width = `${percent}%`;
+    if (currentPercent) currentPercent.textContent = `${percent}%`;
   }
   function updateHeading(menu, chapterId) {
     const page=document.getElementById(`page-${menu}`);
@@ -369,10 +399,39 @@
 
   function setSelection(menu, chapterId, render = true) {
     selection[menu] = Number(chapterId);
+    focusState[menu] = true;
     save();
-    updatePicker(menu);
+    syncBrowserRoute(menu, chapterId);
     if (render) renderMenu(menu);
   }
+
+  function syncBrowserRoute(menu, chapterId) {
+    try {
+      const url = new URL(window.location.href);
+      if (menu && menus.includes(menu) && chapterId && focusState[menu]) {
+        url.searchParams.set('bagian', menu);
+        url.searchParams.set('bab', String(chapterId));
+      } else {
+        url.searchParams.delete('bagian');
+        url.searchParams.delete('bab');
+      }
+      window.history.replaceState(window.history.state || {}, '', `${url.pathname}${url.search}${url.hash}`);
+    } catch (error) { console.warn('URL bab tidak dapat diperbarui:', error); }
+  }
+
+  function onNavigate(menu) {
+    if (menus.includes(menu) && focusState[menu]) syncBrowserRoute(menu, selection[menu]);
+    else syncBrowserRoute(null, null);
+  }
+
+  function scrollToChapterContent(menu) {
+    window.setTimeout(() => {
+      const page = document.getElementById(`page-${menu}`);
+      const target = page?.querySelector('.bab2-content:not([hidden]) .chapter-cover, .chapter-dynamic-content:not([hidden]) .chapter-cover');
+      target?.scrollIntoView({ behavior:'smooth', block:'start' });
+    }, 70);
+  }
+
   function goTo(menu, chapterId) {
     setSelection(menu, chapterId);
     const nav = document.querySelector(`.nav-link[data-page="${menu}"]`);
@@ -854,23 +913,24 @@
     const legacy = document.getElementById(`legacy-bab2-${menu}`);
     const dynamic = document.querySelector(`[data-chapter-dynamic="${menu}"]`);
     const isBab2 = chapterId === 2;
+    const isFocused = Boolean(focusState[menu]);
     if (legacy) {
-      legacy.hidden = !isBab2;
-      if(isBab2 && !legacy.querySelector('.chapter-cover')){
+      legacy.hidden = !(isBab2 && isFocused);
+      if(isBab2 && isFocused && !legacy.querySelector('.chapter-cover')){
         const bab2={title:'Berpikir Komputasional',objective:'Memahami cara menyelesaikan persoalan dengan algoritma, pengenalan pola, optimasi penjadwalan, struktur data, dan representasi data.',theme:'Ubah masalah menjadi langkah yang jelas, logis, dan dapat diuji.',topics:Array(8),missions:Array(10),practice:Array(15),quiz:Array(20)};
         legacy.insertAdjacentHTML('afterbegin',chapterCover(menu,2,bab2));
       }
-      if(isBab2) ensureBab2SharedLayout(menu,legacy);
+      if(isBab2 && isFocused) ensureBab2SharedLayout(menu,legacy);
     }
     if (dynamic) {
-      dynamic.hidden = isBab2;
-      if (!isBab2) {
+      dynamic.hidden = isBab2 || !isFocused;
+      if (!isBab2 && isFocused) {
         dynamic.innerHTML = menu==='materi'?renderMaterial(chapterId):menu==='misi'||menu==='latihan'?renderTasks(menu,chapterId):renderQuiz(chapterId);
       } else dynamic.innerHTML = '';
     }
     updateHeading(menu,chapterId);
     updatePicker(menu);
-    if (!isBab2) {
+    if (isFocused && !isBab2) {
       const count = menu==='misi'?Object.values(getState(chapterId).missions).filter(Boolean).length:menu==='latihan'?Object.values(getState(chapterId).practices).filter(Boolean).length:0;
       const total = menu==='misi'?(chapters[chapterId].missionGames?.length || chapters[chapterId].missions.length):chapters[chapterId].practice.length;
       if (menu==='misi'||menu==='latihan') setTimeout(()=>{const f=document.getElementById(`chapter-finish-${menu}-${chapterId}`);if(f&&count===total)f.classList.add('visible');},0);
@@ -1263,7 +1323,15 @@
 
   function handleClick(event) {
     const target=event.target.closest('button'); if(!target)return;
-    if(target.dataset.chapterSelect){setSelection(target.dataset.chapterSelect,target.dataset.chapter);return;}
+    if(target.dataset.chapterChange){
+      const menu=target.dataset.chapterChange;
+      focusState[menu]=false; save(); syncBrowserRoute(null,null); renderMenu(menu);
+      document.querySelector(`[data-chapter-picker="${menu}"]`)?.scrollIntoView({behavior:'smooth',block:'start'});
+      return;
+    }
+    if(target.dataset.chapterSelect){
+      const menu=target.dataset.chapterSelect; setSelection(menu,target.dataset.chapter); scrollToChapterContent(menu); return;
+    }
     if(target.dataset.chapterComplete){
       const chapterId=Number(target.dataset.chapter);const p=getState(chapterId);p.materiDone=true;save();updatePicker('materi');
       window.MisiApp?.showTransferModal?.({eyebrow:`MATERI BAB ${chapterId} SELESAI`,title:'Siap mencoba tantangan?',message:`Kamu telah menandai materi Bab ${chapterId} selesai. Sekarang waktunya menerapkan konsep melalui misi.`,continueLabel:`Mulai Misi Bab ${chapterId} →`,onContinue:()=>goTo('misi',chapterId)});
@@ -1298,6 +1366,19 @@
     if(target.dataset.chapterQuizSubmit){submitQuiz(Number(target.dataset.chapterQuizSubmit));return;}
     if(target.dataset.chapterQuizReset){const chapterId=Number(target.dataset.chapterQuizReset),p=getState(chapterId);p.quiz={answers:{},submitted:false,score:null,questionCount:chapters[chapterId].quiz.length,currentIndex:0};save();renderMenu('kuis');return;}
   }
+  const initialRoute = (() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const menu = params.get('bagian') || params.get('menu');
+      const chapterId = Number(params.get('bab') || params.get('chapter'));
+      if (!menus.includes(menu) || !Number.isInteger(chapterId) || chapterId < 1 || chapterId > 9) return null;
+      selection[menu] = chapterId;
+      focusState[menu] = true;
+      save();
+      return { menu, chapterId };
+    } catch { return null; }
+  })();
+
   document.addEventListener('click',handleClick);
 
   // Simpan judul asli agar Bab 2 selalu kembali ke tampilan yang sudah lama digunakan.
@@ -1326,5 +1407,6 @@
     });
     save();
   }
-  window.MisiChapters={chapters,selection,setSelection,renderMenu,ensureBab2SharedLayout,remapQuizAnswers,resetQuizAttemptsForContentUpdate};
+  window.MisiChapters={chapters,selection,setSelection,renderMenu,ensureBab2SharedLayout,remapQuizAnswers,resetQuizAttemptsForContentUpdate,onNavigate};
+  if (initialRoute) { window.MisiApp?.showPage(initialRoute.menu); scrollToChapterContent(initialRoute.menu); }
 })();
